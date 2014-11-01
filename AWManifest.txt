@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Sealed: true
+Main-Class: src.se.sics.tac.aw.TACAgent
+Class-Path: ./

@@ -1,0 +1,8 @@
+bin/
+game/
+.settings/
+.classpath
+.project
+*.class
+*.log
+tacserver/
