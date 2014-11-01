@@ -34,15 +34,20 @@ and callbacks in the header of the DummyAgent file.
 
 Compiling
 ---------
-Type "compile.bat" (or "compile.sh" for unix) to compile the AgentWare
-(and the DummyAgent).
+~~Type "compile.bat" (or "compile.sh" for unix) to compile the AgentWare
+(and the DummyAgent).~~
+Currently, I've got it working on eclipse so class files are automatically generated.
+
 
 Running
 -------
 Register your agent at http://tac1.sics.se:8080/ and then enter your
 agent name and password in the configuration file 'agent.conf'.
 
-Then type "java -jar tacagent.jar" to run an example agent.
+~~Then type "java -jar tacagent.jar" to run an example agent.~~
+
+Just run the application and it will ask you to choose a Main class to run, this will be TACAgent.
+
 
 If everything is all right the DummyAgent will connect to the server
 and a window showing the "internal" state of the agent will be shown.
