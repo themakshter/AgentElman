@@ -6,3 +6,5 @@ game/
 *.class
 *.log
 tacserver/
+games/
+aw*.log*

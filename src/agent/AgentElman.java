@@ -1,4 +1,4 @@
-package agent.elman;
+package agent;
 
 
 import se.sics.tac.aw.*;
@@ -15,9 +15,12 @@ public class AgentElman extends AgentImpl {
   private static final boolean DEBUG = false;
 
   private float[] prices;
+  
+  private int[] utilities;
 
   protected void init(ArgEnumerator args) {
     prices = new float[agent.getAuctionNo()];
+    utilities = new int[8];
   }
 
   public void quoteUpdated(Quote quote) {
@@ -83,7 +86,7 @@ public class AgentElman extends AgentImpl {
 
   public void gameStarted() {
     log.fine("Game " + agent.getGameID() + " started!");
-
+    calculateUtilities();
     calculateAllocation();
     sendBids();
   }
@@ -135,6 +138,21 @@ public class AgentElman extends AgentImpl {
       }
     }
   }
+  
+  //TODO: Fabrice, parallelise
+  
+  public void calculateUtilities(){
+	  for(int i = 0; i < 8;i++){
+		 // int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+	     // int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+	      int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
+	      int travelPenalty = 0;
+	      int hotelBonus = hotel;
+	      int funBonus = agent.getClientPreference(i, TACAgent.E1) + agent.getClientPreference(i, TACAgent.E2) + agent.getClientPreference(i, TACAgent.E3);
+	      utilities[i] = 1000 + travelPenalty + hotelBonus + funBonus;
+	      System.out.println("Hotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
+	  }
+  }
 
   private void calculateAllocation() {
     for (int i = 0; i < 8; i++) {
@@ -142,7 +160,8 @@ public class AgentElman extends AgentImpl {
       int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
       int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
       int type;
-
+      
+      
       // Get the flight preferences auction and remember that we are
       // going to buy tickets for these days. (inflight=1, outflight=0)
       int auction = agent.getAuctionFor(TACAgent.CAT_FLIGHT,
@@ -206,7 +225,7 @@ public class AgentElman extends AgentImpl {
 
 
   // -------------------------------------------------------------------
-  // Only for backward compability
+  // Only for backward compatibility
   // -------------------------------------------------------------------
 
   public static void main (String[] args) {
