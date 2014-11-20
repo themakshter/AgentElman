@@ -140,17 +140,17 @@ public class AgentElman extends AgentImpl {
   }
   
   //TODO: Fabrice, parallelise
-  
+  //TODO: Max achievable utility
   public void calculateUtilities(){
 	  for(int i = 0; i < 8;i++){
-		 // int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
-	     // int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
-	      int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
-	      int travelPenalty = 0;
-	      int hotelBonus = hotel;
-	      int funBonus = agent.getClientPreference(i, TACAgent.E1) + agent.getClientPreference(i, TACAgent.E2) + agent.getClientPreference(i, TACAgent.E3);
+		 int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+	     int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+	     int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
+	     int travelPenalty = 0;
+	     int hotelBonus = hotel;
+	     int funBonus = agent.getClientPreference(i, TACAgent.E1) + agent.getClientPreference(i, TACAgent.E2) + agent.getClientPreference(i, TACAgent.E3);
 	      utilities[i] = 1000 + travelPenalty + hotelBonus + funBonus;
-	      System.out.println("Hotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
+	      System.out.println("Stay duration : " + inFlight +  " to " + outFlight+ "\nHotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
 	  }
   }
 
