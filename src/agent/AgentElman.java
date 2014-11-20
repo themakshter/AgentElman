@@ -4,6 +4,7 @@ package agent;
 import se.sics.tac.aw.*;
 import se.sics.tac.util.ArgEnumerator;
 
+import java.util.Arrays;
 import java.util.logging.*;
 
 
@@ -142,15 +143,36 @@ public class AgentElman extends AgentImpl {
   //TODO: Fabrice, parallelise
   
   public void calculateUtilities(){
+	  
 	  for(int i = 0; i < 8;i++){
-		 // int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
-	     // int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
-	      int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
-	      int travelPenalty = 0;
-	      int hotelBonus = hotel;
-	      int funBonus = agent.getClientPreference(i, TACAgent.E1) + agent.getClientPreference(i, TACAgent.E2) + agent.getClientPreference(i, TACAgent.E3);
-	      utilities[i] = 1000 + travelPenalty + hotelBonus + funBonus;
-	      System.out.println("Hotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
+		  
+		 int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+	     int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+	     int hotelBonus = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
+	     int[] entertainmentBonuses = {agent.getClientPreference(i, TACAgent.E1), agent.getClientPreference(i, TACAgent.E2), agent.getClientPreference(i, TACAgent.E3)};     
+	     int stayDuration = outFlight - inFlight;
+	     int travelPenalty = 0;
+	     int funBonus = 0;
+	     
+	     if (stayDuration >=3 ) {
+		     funBonus = entertainmentBonuses[0] + entertainmentBonuses[1] + entertainmentBonuses[2];
+	     } else {
+	    	 
+	    	 Arrays.sort(entertainmentBonuses);
+	    	 
+	    	 for(int j = 0;j<3;j++) {
+	    		 if (j < stayDuration) {
+	    			 funBonus = funBonus + entertainmentBonuses[2-j];
+	    		 } else if(entertainmentBonuses[2-j] > 100) {
+	    			 funBonus = funBonus + entertainmentBonuses[2-j];
+	    			 travelPenalty = travelPenalty + 100;
+	    		 }
+	    	 }
+	     }
+
+	     utilities[i] = 1000 + travelPenalty + hotelBonus + funBonus;
+	     System.out.println("Travel Penalty : "+ travelPenalty+ "\nHotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
+	     System.out.println();
 	  }
   }
 
