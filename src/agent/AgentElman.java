@@ -22,14 +22,16 @@ public class AgentElman extends AgentImpl {
 
 	private float[] prices;
 
-	private int[] utilities;
+	private int[] utilities,risks;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
 		utilities = new int[8];
+		risks = new int[8];
 	}
 
 	public void quoteUpdated(Quote quote) {
+
 		int auction = quote.getAuction();
 		int auctionCategory = agent.getAuctionCategory(auction);
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
@@ -100,6 +102,8 @@ public class AgentElman extends AgentImpl {
 					new int[] {agent.getClientPreference(i, TACAgent.E1), agent.getClientPreference(i, TACAgent.E2), agent.getClientPreference(i, TACAgent.E3)}));
 		}*/
 		calculateAllocation();
+		calculateRisk();
+		calculateUtilOverRisk();
 		sendBids();
 	}
 
@@ -123,7 +127,7 @@ public class AgentElman extends AgentImpl {
 				break;
 			case TACAgent.CAT_HOTEL:
 				if (alloc > 0) {
-					price = 200;
+					price = 201;
 					prices[i] = 200f;
 				}
 				break;
@@ -152,7 +156,6 @@ public class AgentElman extends AgentImpl {
 	}
 
 	//TODO: Fabrice, parallelise
-  //TODO: Max achievable utility
 	public void calculateUtilities(){
 
 		for(int i = 0; i < 8;i++){
@@ -181,12 +184,127 @@ public class AgentElman extends AgentImpl {
 				}
 			}
 
-			utilities[i] = 1000 + travelPenalty + hotelBonus + funBonus;
-	      System.out.println("Stay duration : " + inFlight +  " to " + outFlight+ "\nHotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
+			utilities[i] = 1000 - travelPenalty + hotelBonus + funBonus;
+			System.out.println("Stay duration : " + inFlight +  " to " + outFlight+ "\nHotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utilities[i]);
 			System.out.println();
 		}
 	}
+	
+	public void calculateRisk() {
+		for(int i = 0; i < 8;i++){
+			int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+			int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+			int stayDuration = outFlight - inFlight;
+			int risk = 0;
+			
+			for(int j = inFlight;j<outFlight;j++) {
+				switch(j){
+					case 1:
+						risk = risk + 1;
+					break;
+					case 2:
+						risk = risk + 2;
+					break;
+					case 3:
+						risk = risk + 2;
+						break;
+					case 4:
+						risk = risk + 1;
+						break;
+					default:
+						break;
+				}
+			}
+			risks[i] = risk;
+			System.out.println(risk + " ");
+		}
+	}
+	
+	public void calculateUtilOverRisk() {
+		
+		//int[][] gotTickets = new int[5][3];
+		int[][] gotTickets = new int[12][2];
+		
+		/*for(int i = 1; i < 5;i++){
+			gotTickets[i][0] = agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_ALLIGATOR_WRESTLING, i));
+			gotTickets[i][1] = agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i));
+			gotTickets[i][2] = agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i));
+		}*/
+		
+		int pointer = 0;
+		
+		for(int i = 1; i < 5;i++) {
+				for(int j = 0 ; j < agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_ALLIGATOR_WRESTLING, i));j++) {
+					gotTickets[pointer][0] = i;
+					gotTickets[pointer][1] = agent.TYPE_ALLIGATOR_WRESTLING;
+					pointer++;
+				}	
+				for(int j = 0 ; j < agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i));j++) {
+					gotTickets[pointer][0] = i;
+					gotTickets[pointer][1] = agent.TYPE_AMUSEMENT;
+					pointer++;
+				}	
+				for(int j = 0 ; j < agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i));j++) {
+					gotTickets[pointer][0] = i;
+					gotTickets[pointer][1] = agent.TYPE_MUSEUM;
+					pointer++;
+				}	
+		}
+		
+		int[][] bestClients = new int[12][2];
+		int[]	tempStore = new int[4];
+				
+		for(int i = 0;i<8;i++){
+			int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+			int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+			
+			for(int j = 0;j<12;j++) {
+				if(inFlight<=gotTickets[j][0] && gotTickets[j][0]<outFlight){
+					if(bestClients[j][1] < agent.getClientPreference(i, gotTickets[j][1])){
+						tempStore[0] = gotTickets[j][0];
+						tempStore[1] = gotTickets[j][1];
+						tempStore[2] = bestClients[j][0];
+						tempStore[3] = bestClients[j][1];
+						
+						bestClients[j][0] = i;
+						bestClients[j][1] = agent.getClientPreference(i, gotTickets[j][1]);
+						
+						pushDown(tempStore[0],tempStore[1],tempStore[2],tempStore[3],j,bestClients,gotTickets,tempStore);
+						
 
+					}
+				}
+			}
+		}
+		
+		for(int j = 0; j < 8;j++){
+			double calculatedRisk = ((double) utilities[j])/((double) risks[j]);
+			System.out.println(calculatedRisk + " ");
+		}
+	}
+	
+	private void pushDown(int tempStore1, int tempStore2, int tempStore3, int tempStore4, int j, int[][] bestClients, int[][] gotTickets, int[] tempStore){
+		for(int k = j+1;k<12;k++) {
+			if(tempStore1 == gotTickets[k][0] && tempStore2 == gotTickets[k][1]) {
+				if(bestClients[k][1] < tempStore3) {
+					tempStore[0] = gotTickets[k][0];
+					tempStore[1] = gotTickets[k][1];
+					tempStore[2] = bestClients[k][0];
+					tempStore[3] = bestClients[k][1];
+					
+					bestClients[k][0] = tempStore3;
+					bestClients[k][1] = tempStore4;
+					
+					pushDown(tempStore[0],tempStore[1],tempStore[2],tempStore[3],j,bestClients,gotTickets,tempStore);
+				}
+			} else {
+				return;
+			}
+		}
+	}
+	
+	
+/*
 	private void calculateAllocation() {
 		for (int i = 0; i < 8; i++) {
 			int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
@@ -224,6 +342,46 @@ public class AgentElman extends AgentImpl {
 				log.finer("Adding entertainment " + eType + " on " + auction);
 				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
 			}
+		}
+	}*/
+	
+	private void calculateAllocation() {
+		for (int i = 0; i < 8; i++) {
+			int inFlight = agent.getClientPreference(i, TACAgent.ARRIVAL);
+			int outFlight = agent.getClientPreference(i, TACAgent.DEPARTURE);
+			int hotel = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
+			int type;
+
+			// Get the flight preferences auction and remember that we are
+			// going to buy tickets for these days. (inflight=1, outflight=0)
+			int auction = agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.TYPE_INFLIGHT, inFlight);
+			agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+			
+			auction = agent.getAuctionFor(TACAgent.CAT_FLIGHT,TACAgent.TYPE_OUTFLIGHT, outFlight);
+			agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+
+			// if the hotel value is greater than 70 we will select the
+			// expensive hotel (type = 1)
+			if (hotel > 70) {
+				type = TACAgent.TYPE_GOOD_HOTEL;
+			} else {
+				type = TACAgent.TYPE_CHEAP_HOTEL;
+			}
+			// allocate a hotel night for each day that the agent stays
+			for (int d = inFlight; d < outFlight; d++) {
+				auction = agent.getAuctionFor(TACAgent.CAT_HOTEL, type, d);
+				log.finer("Adding hotel for day: " + d + " on " + auction);
+				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+			}
+
+			int eType = -1;
+			while((eType = nextEntType(i, eType)) > 0) {
+				auction = bestEntDay(inFlight, outFlight, eType);
+				log.finer("Adding entertainment " + eType + " on " + auction);
+				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+			}
+
+
 		}
 	}
 
