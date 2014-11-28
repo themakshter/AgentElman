@@ -20,20 +20,20 @@ public class AgentElman extends AgentImpl {
 
 	private static final boolean DEBUG = false;
 
-	private float[] prices;
-
+	private float[] prices,diff,lastAskPrice;
 	private int[] utilities,risks;
 	private double[] calculatedUtility;
-
+	
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
 		utilities = new int[8];
 		risks = new int[8];
 		calculatedUtility = new double[8];
+		diff = new float[28];
+		lastAskPrice = new float[28];
 	}
 
 	public void quoteUpdated(Quote quote) {
-
 		int auction = quote.getAuction();
 		int auctionCategory = agent.getAuctionCategory(auction);
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
@@ -42,7 +42,8 @@ public class AgentElman extends AgentImpl {
 					quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
-				prices[auction] = quote.getAskPrice() + 50;
+				updateBids();
+				prices[auction] = quote.getAskPrice() + diff[auction];
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -130,7 +131,7 @@ public class AgentElman extends AgentImpl {
 			case TACAgent.CAT_HOTEL:
 				if (alloc > 0) {
 					price = 201;
-					prices[i] = 200f;
+					prices[i] = 201f;
 				}
 				break;
 			case TACAgent.CAT_ENTERTAINMENT:
@@ -156,6 +157,21 @@ public class AgentElman extends AgentImpl {
 			}
 		}
 	}
+	
+	
+	private void updateBids(){
+		for(int i = 8,n = 15; i < n;i++){
+			Quote quote = agent.getQuote(i);
+			if(quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0){
+				float safety = 5.0f;
+				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
+			}else if(lastAskPrice[i] == 0){
+				diff[i] = 50f;
+			}
+			lastAskPrice[i] = quote.getAskPrice();
+		}
+	}
+	
 
 	//TODO: Fabrice, parallelise
 	public void calculateUtilities(){
