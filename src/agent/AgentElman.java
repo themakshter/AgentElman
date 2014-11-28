@@ -56,10 +56,16 @@ public class AgentElman extends AgentImpl {
 			int alloc = agent.getAllocation(auction) - agent.getOwn(auction);
 			if (alloc != 0) {
 				Bid bid = new Bid(auction);
-				if (alloc < 0)
-					prices[auction] = 200f - (agent.getGameTime() * 120f) / 720000;
-				else
+				if (alloc < 0){
+					double time = ((double)agent.getGameTime())/(60.0*1000.0); 
+					time = time * 0.4873; 
+					long power = 120 - Math.round(Math.pow(time,3)); 
+					if(power > 80){
+						prices[auction] = (new Float("" + power)).floatValue();
+					}
+				}else{
 					prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
+				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -163,7 +169,7 @@ public class AgentElman extends AgentImpl {
 		for(int i = 8,n = 15; i < n;i++){
 			Quote quote = agent.getQuote(i);
 			if(quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0){
-				float safety = 5.0f;
+				float safety = 4.0f;
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
 			}else if(lastAskPrice[i] == 0){
 				diff[i] = 50f;
