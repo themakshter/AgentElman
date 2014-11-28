@@ -38,7 +38,7 @@ public class CalculateUtilities implements Runnable {
 	    	 }
 	     }
 
-	     utility = 1000 + travelPenalty + hotelBonus + funBonus;
+	     utility = 1000 - travelPenalty + hotelBonus + funBonus;
 	     System.out.println("Travel Penalty : "+ travelPenalty+ "\nHotel Bonus : " + hotelBonus + "\nFun Bonus : " + funBonus + "\nMax util : " + utility);
 	     System.out.println();
 	     Thread.currentThread().interrupt();

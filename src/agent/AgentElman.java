@@ -23,11 +23,13 @@ public class AgentElman extends AgentImpl {
 	private float[] prices;
 
 	private int[] utilities,risks;
+	private double[] calculatedRisk;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
 		utilities = new int[8];
 		risks = new int[8];
+		calculatedRisk = new double[8];
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -200,23 +202,23 @@ public class AgentElman extends AgentImpl {
 			for(int j = inFlight;j<outFlight;j++) {
 				switch(j){
 					case 1:
-						risk = risk + 1;
+						risk += 1;
 					break;
 					case 2:
-						risk = risk + 2;
+						risk += 2;
 					break;
 					case 3:
-						risk = risk + 2;
+						risk += 2;
 						break;
 					case 4:
-						risk = risk + 1;
+						risk += 1;
 						break;
 					default:
 						break;
 				}
 			}
 			risks[i] = risk;
-			System.out.println(risk + " ");
+			System.out.println("Risk value : " + risk);
 		}
 	}
 	
@@ -278,22 +280,22 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		for(int j = 0; j < 8;j++){
-			double calculatedRisk = ((double) utilities[j])/((double) risks[j]);
-			System.out.println(calculatedRisk + " ");
+			calculatedRisk[j] = ((double) utilities[j])/((double) risks[j]);
+			System.out.println("Calculated utility : " + calculatedRisk[j]);
 		}
 	}
 	
-	private void pushDown(int tempStore1, int tempStore2, int tempStore3, int tempStore4, int j, int[][] bestClients, int[][] gotTickets, int[] tempStore){
+	private void pushDown(int previousValue1, int previousValue2, int previousValue3, int previousValue4, int j, int[][] bestClients, int[][] gotTickets, int[] tempStore){
 		for(int k = j+1;k<12;k++) {
-			if(tempStore1 == gotTickets[k][0] && tempStore2 == gotTickets[k][1]) {
-				if(bestClients[k][1] < tempStore3) {
+			if(previousValue1 == gotTickets[k][0] && previousValue2 == gotTickets[k][1]) {
+				if(bestClients[k][1] < previousValue3) {
 					tempStore[0] = gotTickets[k][0];
 					tempStore[1] = gotTickets[k][1];
 					tempStore[2] = bestClients[k][0];
 					tempStore[3] = bestClients[k][1];
 					
-					bestClients[k][0] = tempStore3;
-					bestClients[k][1] = tempStore4;
+					bestClients[k][0] = previousValue3;
+					bestClients[k][1] = previousValue4;
 					
 					pushDown(tempStore[0],tempStore[1],tempStore[2],tempStore[3],j,bestClients,gotTickets,tempStore);
 				}
