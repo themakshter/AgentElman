@@ -23,13 +23,13 @@ public class AgentElman extends AgentImpl {
 	private float[] prices;
 
 	private int[] utilities,risks;
-	private double[] calculatedRisk;
+	private double[] calculatedUtility;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
 		utilities = new int[8];
 		risks = new int[8];
-		calculatedRisk = new double[8];
+		calculatedUtility = new double[8];
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -253,7 +253,9 @@ public class AgentElman extends AgentImpl {
 				}	
 		}
 		
+		
 		int[][] bestClients = new int[12][2];
+		
 		int[]	tempStore = new int[4];
 				
 		for(int i = 0;i<8;i++){
@@ -280,9 +282,24 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		for(int j = 0; j < 8;j++){
-			calculatedRisk[j] = ((double) utilities[j])/((double) risks[j]);
-			System.out.println("Calculated utility : " + calculatedRisk[j]);
+			int ticketUtil = getTicketUtilityForClient(bestClients, gotTickets, j);
+			calculatedUtility[j] = ((double) utilities[j])/((double) risks[j]) + ticketUtil;
+			System.out.println("Calculated utility : " + calculatedUtility[j]);
 		}
+	}
+	
+	public int getTicketUtilityForClient(int[][] bestClients,int[][]gotTickets,int clientNumber){
+		boolean[] used = {false,false,false,false,false};
+		int ticketUtility = 0;
+		for(int i = 0; i < bestClients.length;i++){
+			if(bestClients[i][0] == clientNumber){
+				if(!used[gotTickets[i][0]]){
+					ticketUtility += bestClients[i][1];
+					used[gotTickets[i][0]]= true;
+				}
+			}
+		}
+		return ticketUtility;
 	}
 	
 	private void pushDown(int previousValue1, int previousValue2, int previousValue3, int previousValue4, int j, int[][] bestClients, int[][] gotTickets, int[] tempStore){

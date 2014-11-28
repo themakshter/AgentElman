@@ -84,7 +84,8 @@
  *
  *
  */
-package bath.tac.blazin;
+package agent;
+
 import se.sics.tac.aw.*;
 import se.sics.tac.util.ArgEnumerator;
 import java.util.logging.*;
