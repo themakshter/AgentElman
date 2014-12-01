@@ -149,25 +149,25 @@ public class AgentElman extends AgentImpl {
 			clients.add(c);
 
 			// flight
-			wantFlights.incrementInFlight(c.getInFlight());
-			wantFlights.incrementOutFlight(c.getOutFlight());
+			wantFlights.add(1,c.getInFlight());
+			wantFlights.add(2,c.getOutFlight());
 
 			// hotel
-			wantHotels.incrementShanty(c.getInFlight(), c.getOutFlight());
+			wantHotels.addDuration(1,c.getInFlight(), c.getOutFlight());
 
 			// entertainment
-			wantEntertainment.addEntertainment(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
+			wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
 		}
 		
 		// Set things we own for entertainment
 		for (int i = 1; i < 5; i++) {
-			haveEntertainment.addAlligator(i,
+			haveEntertainment.add(
 					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
-							agent.TYPE_ALLIGATOR_WRESTLING, i)));
-			haveEntertainment.addAmusement(i, agent.getOwn(agent.getAuctionFor(
-					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
-			haveEntertainment.addMuseum(i, agent.getOwn(agent.getAuctionFor(
-					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
+							agent.TYPE_ALLIGATOR_WRESTLING, i)),i);
+			haveEntertainment.add(agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)),i);
+			haveEntertainment.add(agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)),i);
 		}
 		
 		
