@@ -1,8 +1,8 @@
 package agent;
 
 public class FlightTracker {
-	private int[] inFlight  = {0,0,0,0};
-	private int[] outFlight  = {0,0,0,0};
+	private int[] inFlight  = {0,0,0,0,0};
+	private int[] outFlight  = {0,0,0,0,0};
 	
 	public void incrementInFlight(int day){
 		inFlight[day-1]++;

@@ -29,6 +29,37 @@ public class EntertainmentTracker {
 		museum[day-1]+=number;
 	}
 	
+	public void addEntertainment(int type,int day){
+		switch(type){
+		case 1:
+			alligator[day-1]++;
+		case 2:
+			amusement[day-1]++;
+		case 3:
+			museum[day-1]++;
+		}
+	}
+	
+	public void subtractEntertainment(int type,int day){
+		switch(type){
+		case 1:
+			alligator[day-1]--;
+		case 2:
+			amusement[day-1]--;
+		case 3:
+			museum[day-1]--;
+		}
+	}
+
+	public void addEntertainment(int type,int inDate,int outDate){
+		for(int i = inDate;i < outDate;i++){
+			addEntertainment(type,i);
+		}
+	}
+	
+	
+	
+	
 	public int getTicket(int type,int day){
 		switch(type){
 		case 1:
