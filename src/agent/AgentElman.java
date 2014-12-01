@@ -171,9 +171,7 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		
-		
-			
-		
+				
 		calculateUtilities();		
 		
 		calculateAllocation();
@@ -183,6 +181,13 @@ public class AgentElman extends AgentImpl {
 		calculateUtilOverRisk();
 		
 		sendBids();
+	}
+	
+	public void updateTrackers(){
+		for(int i = 0;i < 4;i++){
+			
+		}
+				
 	}
 
 	public void gameStopped() {
@@ -495,31 +500,6 @@ public class AgentElman extends AgentImpl {
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)
 			if (hotel > 70) {
-				type = TACAgent.TYPE_GOOD_HOTEL;
-			} else {
-				type = TACAgent.TYPE_CHEAP_HOTEL;
-			}
-
-			// a switch, with it we will change the hotel type
-			boolean current = (type == TACAgent.TYPE_GOOD_HOTEL);
-			for (int d = inFlight; d < outFlight; d++) {
-				// cheap hotels start at 8:
-				int start = 8;
-				// expensive hotels start at 12:
-				if (current)
-					start = 12;
-				boolean enough = (agent.getOwn(start + d) > (c.getIndex() + 1));
-				// Is the auction closed?
-				Quote quote = agent.getQuote(start + d);
-				if (quote.isAuctionClosed() && !enough) {
-					// Change the switch to change the hotel type:
-					current = !current;
-					// don't continue:
-					break;
-				}
-			}
-			// Change the hotel type with the current switch:
-			if (current) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;

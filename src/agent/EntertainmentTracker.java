@@ -5,29 +5,6 @@ public class EntertainmentTracker {
 	private int[] amusement = {0,0,0,0};
 	private int[] museum = {0,0,0,0};
 	
-	public void incrementAlligator(int day){
-		alligator[day-1]++;
-	}
-	
-	public void addAlligator(int day,int number){
-		alligator[day-1]+=number;
-	}
-	
-	public void incrementAmusement(int day){
-		amusement[day-1]++;
-	}
-	
-	public void addAmusement(int day,int number){
-		amusement[day-1]+= number;
-	}
-	
-	public void incrementMuseum(int day){
-		museum[day-1]++;
-	}
-	
-	public void addMuseum(int day,int number){
-		museum[day-1]+=number;
-	}
 	
 	public void addEntertainment(int type,int day){
 		switch(type){
@@ -40,6 +17,36 @@ public class EntertainmentTracker {
 		}
 	}
 	
+	public void addEntertainmentNumber(int type,int day, int number){
+		for(int i = 0; i < number;i++){
+			addEntertainment(type,day);
+		}
+	}
+	
+	public void addEntertainmentDuration(int type, int inDate, int outDate){
+		for(int i=inDate;i< outDate;i++){
+			addEntertainment(type,i);
+		}
+	}
+	
+	public void subtract(int type,int day,int amount){
+	int[] required;
+	switch(type){
+	case 1:
+		required = alligator;
+		break;
+	case 2:
+		required = amusement;
+		break;
+	case 3:
+		required = museum;
+		break;
+	}
+	
+	
+	
+	}
+	
 	public void subtractEntertainment(int type,int day){
 		switch(type){
 		case 1:
@@ -50,15 +57,18 @@ public class EntertainmentTracker {
 			museum[day-1]--;
 		}
 	}
-
-	public void addEntertainment(int type,int inDate,int outDate){
-		for(int i = inDate;i < outDate;i++){
-			addEntertainment(type,i);
+	
+	public void subtractEntertainmentAmount(int type,int day,int number){
+		for(int i = 0; i < number;i++){
+			subtractEntertainment(type,day);
 		}
 	}
 	
-	
-	
+	public void subtractEntertainmentDuration(int type, int inDate, int outDate){
+		for(int i=inDate;i< outDate;i++){
+			subtractEntertainment(type, i);
+		}
+	}
 	
 	public int getTicket(int type,int day){
 		switch(type){
