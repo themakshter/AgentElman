@@ -101,7 +101,7 @@ public class AgentElman extends AgentImpl {
 					float tempPrice = (float) Math.cbrt((double) agent
 							.getGameTime() * 100f);
 					// if(tempPrice < ){
-					prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
+					prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
 					// }
 				}
 				bid.addBidPoint(alloc, prices[auction]);
@@ -534,8 +534,8 @@ public class AgentElman extends AgentImpl {
 
 			int eType = -1;
 			while ((eType = nextEntType(c.getIndex(), eType)) > 0) {
-				clientEntertainment[c.getIndex()][eType] = agent
-						.getClientPreference(c.getIndex(), eType);
+//				clientEntertainment[c.getIndex()][eType] = agent
+//						.getClientPreference(c.getIndex(), eType);
 				auction = bestEntDay(inFlight, outFlight, eType);
 				log.finer("Adding entertainment " + eType + " on " + auction);
 				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
