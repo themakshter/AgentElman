@@ -140,34 +140,44 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
+		//Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
 		for (int i = 0; i < 8; i++) {
-			Client c = new Client();
-			c.setInFlight(agent.getClientPreference(i, TACAgent.ARRIVAL));
-			c.setOutFlight(agent.getClientPreference(i, TACAgent.DEPARTURE));
-			c.setHotel(agent.getClientPreference(i, TACAgent.HOTEL_VALUE));
-			c.setAlligator(agent.getClientPreference(i, TACAgent.E1));
-			c.setAmusement(agent.getClientPreference(i, TACAgent.E2));
-			c.setMuseum(agent.getClientPreference(i, TACAgent.E3));
-			c.calculateMaxUtility();
-			c.calculateRisk();
+			Client c = new Client(agent,i);
 			clients.add(c);
+			
+			//flight
+			wantFlights.incrementInFlight(c.getInFlight());
+			wantFlights.incrementOutFlight(c.getOutFlight());
+	
+			//hotel
+			wantHotels.incrementShanty(c.getInFlight(), c.getOutFlight());
+			
+			//entertainment
+			
+			
+			
 		}
-		calculateUtilities();
-		// Possible multithread solution, not tested, but normal calculation
-		// takes maximum 1ms atm, so is not a source of speed up yet
-		/*
-		 * for(int i = 0; i<8;i++) { executorService.execute(new
-		 * CalculateUtilities(agent.getClientPreference(i, TACAgent.ARRIVAL),
-		 * agent.getClientPreference(i, TACAgent.DEPARTURE),
-		 * agent.getClientPreference(i, TACAgent.HOTEL_VALUE), new int[]
-		 * {agent.getClientPreference(i, TACAgent.E1),
-		 * agent.getClientPreference(i, TACAgent.E2),
-		 * agent.getClientPreference(i, TACAgent.E3)})); }
-		 */
+		
+		//Set things we own for entertainment
+		for(int i = 1; i < 5;i++){
+			haveEntertainment.addAlligator(i, agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
+					agent.TYPE_ALLIGATOR_WRESTLING, i)));;
+			haveEntertainment.addAmusement(i, agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
+					agent.TYPE_AMUSEMENT, i)));
+			haveEntertainment.addMuseum(i, agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
+					agent.TYPE_MUSEUM, i)));
+		}
+			
+		
+		calculateUtilities();		
+		
 		calculateAllocation();
+		
 		calculateRisk();
+		
 		calculateUtilOverRisk();
+		
 		sendBids();
 	}
 

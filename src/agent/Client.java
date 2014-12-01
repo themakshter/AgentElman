@@ -10,19 +10,16 @@ public class Client {
 	private int index, inFlight, outFlight, hotel, alligator, amusement,
 			museum, maxUtility, risk, calcualtedUtility;
 
-	public Client() {
-
-	}
-
-	public Client(int index, int inFlight, int outFlight, int hotel,
-			int alligator, int amusement, int museum) {
-		this.index = index;
-		this.inFlight = inFlight;
-		this.outFlight = outFlight;
-		this.hotel = hotel;
-		this.alligator = alligator;
-		this.amusement = amusement;
-		this.museum = museum;
+	public Client(TACAgent agent,int index) {
+		setIndex(index);
+		setInFlight(agent.getClientPreference(index, TACAgent.ARRIVAL));
+		setOutFlight(agent.getClientPreference(index, TACAgent.DEPARTURE));
+		setHotel(agent.getClientPreference(index, TACAgent.HOTEL_VALUE));
+		setAlligator(agent.getClientPreference(index, TACAgent.E1));
+		setAmusement(agent.getClientPreference(index, TACAgent.E2));
+		setMuseum(agent.getClientPreference(index, TACAgent.E3));
+		calculateMaxUtility();
+		calculateRisk();
 	}
 
 	public void calculateMaxUtility() {
