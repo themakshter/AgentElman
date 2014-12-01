@@ -20,7 +20,7 @@ public class AgentElman extends AgentImpl {
 
 	private static final boolean DEBUG = false;
 
-	private float[] prices,diff,lastAskPrice;
+	private float[] prices,diff,lastAskPrice,lastAskPrice2;
 	private int[] utilities,risks;
 	private double[] calculatedUtility;
 	
@@ -31,13 +31,15 @@ public class AgentElman extends AgentImpl {
 		calculatedUtility = new double[8];
 		diff = new float[28];
 		lastAskPrice = new float[28];
+		lastAskPrice2 = new float[28];
 	}
 
 	public void quoteUpdated(Quote quote) {
 		int auction = quote.getAuction();
 		int auctionCategory = agent.getAuctionCategory(auction);
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
-			int alloc = agent.getAllocation(auction);
+			int alloc = agent.getAllocation(auction); 
+			float fear = 5.0f;
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction)) &&
 					quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
@@ -51,6 +53,17 @@ public class AgentElman extends AgentImpl {
 							+ " own=" + agent.getOwn(auction));
 				}
 				agent.submitBid(bid);
+			}else if(quote.getAskPrice > lastAskPrice - fear && lastAskPrice[i] != 0){//change here?
+				Bid bid = new Bid(auction);
+				// Can not own anything in hotel auctions...
+				updateBids();
+				prices[auction] = quote.getAskPrice() + diff[auction];
+				bid.addBidPoint(alloc, prices[auction]);
+				if (DEBUG) {
+					log.finest("submitting bid with alloc="
+							+ agent.getAllocation(auction)
+							+ " own=" + agent.getOwn(auction));
+				}
 			}
 		} else if (auctionCategory == TACAgent.CAT_ENTERTAINMENT) {
 			int alloc = agent.getAllocation(auction) - agent.getOwn(auction);
@@ -166,14 +179,19 @@ public class AgentElman extends AgentImpl {
 	
 	
 	private void updateBids(){
+		float fear = 5.0f;
 		for(int i = 8,n = 15; i < n;i++){
 			Quote quote = agent.getQuote(i);
 			if(quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0){
 				float safety = 4.0f;
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
-			}else if(lastAskPrice[i] == 0){
+			}else if(quote.getAskPrice > lastAskPrice - fear && lastAskPrice[i] != 0){
+				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]); //second order change
+			}
+			else if(lastAskPrice[i] == 0){
 				diff[i] = 50f;
 			}
+			lastAskPrice2[i] = lastAskPrice[i];
 			lastAskPrice[i] = quote.getAskPrice();
 		}
 	}
