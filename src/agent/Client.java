@@ -153,6 +153,17 @@ public class Client {
 	public void setCalcualtedUtility(int calcualtedUtility) {
 		this.calcualtedUtility = calcualtedUtility;
 	}
+	
+	public int getMaximumEntertainment(){
+		int max = 0;
+		int[] entertainmentBonuses = { alligator, amusement, museum };
+		for(int i = 1; i < entertainmentBonuses.length;i++){
+			if(entertainmentBonuses[i] > entertainmentBonuses[i-1]){
+				max = i;
+			}
+		}
+		return max+1;
+	}
 }
 
 class ClientComparator implements Comparator<Client> {
