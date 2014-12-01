@@ -28,19 +28,13 @@ public class HotelTracker extends Tracker {
 	}
 	
 	@Override
-	public void subtract(int type, int day) {
-		
-	}
-
-	@Override
-	public void subtractAmount(int type, int day, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void subtractDuration(int type, int inDate, int outDate) {
-		// TODO Auto-generated method stub
+	public int subtract(int type, int day,int amount) {
+		if(type == 1){
+			return subtract(towers, day, amount);
+		}else if(type == 2){
+			return subtract(shanty, day, amount);
+		}
+		return 0;
 		
 	}
 

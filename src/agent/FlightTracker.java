@@ -25,22 +25,16 @@ public class FlightTracker extends Tracker {
 		}
 	}
 	
+	@Override
+	public int subtract(int type, int day, int amount) {
+		if(type == 1){
+			return subtract(inFlight, day, amount);
+		}else if(type == 2){
+			return subtract(outFlight, day, amount);
+		}
+		return 0;		
+	}
 	
-	@Override
-	public void subtract(int type, int day) {
-		
-		
-	}
-	@Override
-	public void subtractAmount(int type, int day, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void subtractDuration(int type, int inDate, int outDate) {
-		// TODO Auto-generated method stub
-		
-	}
 	@Override
 	public int getAmount(int type, int day) {
 		if(type == 1){
