@@ -485,7 +485,22 @@ public class AgentElman extends AgentImpl {
 	 * + eType + " on " + auction); agent.setAllocation(auction,
 	 * agent.getAllocation(auction) + 1); } } }
 	 */
-
+	
+	//TODO: complete method
+	private void updateAllocation(){
+		for(int i = 8;i < 15;i++){
+			int own = agent.getOwn(i);
+			int allocated = agent.getAllocation(i);
+			Quote q = agent.getQuote(i);
+			//if auction closes and we don't have enough, we target the other auction
+			if(own < allocated && q.isAuctionClosed()){
+				
+			}
+		}
+	}
+	
+	
+	
 	private void calculateAllocation() {
 		for (Client c : clients) {
 			int inFlight = c.getInFlight();
@@ -525,7 +540,6 @@ public class AgentElman extends AgentImpl {
 				auction = bestEntDay(inFlight, outFlight, eType);
 				log.finer("Adding entertainment " + eType + " on " + auction);
 				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
-
 			}
 
 		}
