@@ -5,7 +5,7 @@ import se.sics.tac.util.ArgEnumerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.Exchanger;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
@@ -184,9 +184,15 @@ public class AgentElman extends AgentImpl {
 	}
 	
 	public void updateTrackers(){
+		int amountLeft;
 		for(int i = 0;i < 4;i++){
-			
+			for(int j = 1; j < 4;j++){
+				amountLeft = wantEntertainment.subtract(j, i, haveEntertainment.getTicket(j, i));
+			}
 		}
+		
+		//TODO: sort out haveStuff and wantStuff
+		
 				
 	}
 
