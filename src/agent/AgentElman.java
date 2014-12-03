@@ -45,7 +45,6 @@ public class AgentElman extends AgentImpl {
 		lastBidPrice = new float[28];
 		lastBidPrice2 = new float[28];
 		clientEntertainment = new int[8][3];
-		clients = new ArrayList<Client>();
 		haveEntertainment = new EntertainmentTracker();
 		wantEntertainment = new EntertainmentTracker();
 		haveHotels = new HotelTracker();
@@ -141,6 +140,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
+		clients = new ArrayList<Client>();
 		
 
 		// Set Clients
@@ -234,6 +234,8 @@ public class AgentElman extends AgentImpl {
 								+ agent.getOwn(i));
 					}
 					agent.submitBid(bid);
+					price = 0;
+					prices[i] = 0;
 				}
 				
 				break;
