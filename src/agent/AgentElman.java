@@ -32,6 +32,7 @@ public class AgentElman extends AgentImpl {
 	private FlightTracker haveFlights,wantFlights;
 	
 	ArrayList<Client> clients;
+	ClientComparator cc = new ClientComparator();
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -170,7 +171,6 @@ public class AgentElman extends AgentImpl {
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)),i);
 		}
 		
-		ClientComparator cc = new ClientComparator();
 		ArrayList<Client> sortedClients = cc.sort(clients,1);
 		for(Client c: sortedClients) {
 			System.out.println("MaxUtility: " + c.getMaxUtility() + " , Index: " + c.getIndex());
@@ -575,6 +575,14 @@ public class AgentElman extends AgentImpl {
 			return TACAgent.TYPE_MUSEUM;
 		return -1;
 	}
+	
+	private void allocateStartingEnt() {
+		ArrayList<Client> sortedClients = cc.sort(clients,2);
+		
+		
+		
+	}
+	
 
 	// -------------------------------------------------------------------
 	// Only for backward compatibility
