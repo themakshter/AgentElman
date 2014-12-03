@@ -68,6 +68,19 @@ public class ClientPackage {
 		}
 	}
 
+	public boolean validDay(int day) {
+
+		if(inFlight != null && outFlight != null) {
+			if(day >= inFlight && day < outFlight) {
+				return true;
+			} else {
+				return false;
+			}
+		} 
+		return false;
+		
+	}
+
 
 	//GETTERS AND SETTERS
 	public Client getOwner() {
@@ -116,6 +129,10 @@ public class ClientPackage {
 
 	public void setEntertainments(int[] entertainments) {
 		this.entertainments = entertainments;
+	}
+	
+	public void setEntertainmentsAt(int day,int value) {
+		entertainments[day-1] = value;
 	}
 
 

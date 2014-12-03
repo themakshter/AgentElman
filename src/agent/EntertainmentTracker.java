@@ -70,4 +70,34 @@ public class EntertainmentTracker extends Tracker {
 		return 0;
 	}
 
+
+	public int[] getAlligator() {
+		return alligator;
+	}
+
+
+	public void setAlligator(int[] alligator) {
+		this.alligator = alligator;
+	}
+
+
+	public int[] getAmusement() {
+		return amusement;
+	}
+
+
+	public void setAmusement(int[] amusement) {
+		this.amusement = amusement;
+	}
+
+
+	public int[] getMuseum() {
+		return museum;
+	}
+
+
+	public void setMuseum(int[] museum) {
+		this.museum = museum;
+	}
+
 }
