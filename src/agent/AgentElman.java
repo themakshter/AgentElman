@@ -246,7 +246,7 @@ public class AgentElman extends AgentImpl {
 		calculateAllocation();
 		sendBids();
 
-		/*calculateUtilities();		
+		/*
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -255,7 +255,8 @@ public class AgentElman extends AgentImpl {
 		};
 		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
 		updateTimer.start();
-*/
+		calculateUtilities();	
+		calculateRisk();	
 		calculateUtilOverRisk();
 		*/
 
