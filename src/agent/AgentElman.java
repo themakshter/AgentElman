@@ -3,12 +3,15 @@ package agent;
 import se.sics.tac.aw.*;
 import se.sics.tac.util.ArgEnumerator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
+
+import javax.swing.Timer;
 
 public class AgentElman extends AgentImpl {
 
@@ -34,6 +37,9 @@ public class AgentElman extends AgentImpl {
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
 	
+	Timer updateTimer;
+	
+	
 	private int[][] entertainVal;
 
 	protected void init(ArgEnumerator args) {
@@ -55,9 +61,13 @@ public class AgentElman extends AgentImpl {
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
 		
+<<<<<<< HEAD
 		unallocatedEntertainment = new EntertainmentTracker();
 		
 		entertainVal = new int[13][8];
+=======
+		
+>>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -105,10 +115,27 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					float tempPrice = (float) Math.cbrt((double) agent
-							.getGameTime() * 100f);
+					int tempMax = 0;
+					int tempMaxIndex = 0;
+					for(int a = 0; a<8; a++){
+						//auction -16
+						if(entertainVal[auction-16][a] > tempMax){
+							tempMax = entertainVal[auction-16][a];
+							tempMaxIndex = a;
+						}						
+					}
+					float tempPrice = (float) Math.cbrt(((double) Math.pow(tempMax, 3) * agent.getGameTime() / 420000));
+					if(tempPrice < tempMax - 5){
+						prices[auction] = tempPrice;
+					}else{
+						prices[auction] = tempMax - 5;
+					}
+					entertainVal[auction - 16][tempMaxIndex] = 0;
+					
+					//float tempPrice = (float) Math.cbrt((double) agent
+					//		.getGameTime() * 100f);
 					// if(tempPrice < ){
-					prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
+					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
 					// }
 				}
 				bid.addBidPoint(alloc, prices[auction]);
@@ -147,8 +174,13 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
+<<<<<<< HEAD
 		init(null);
 
+=======
+		clients = new ArrayList<Client>();
+		entertainVal = new int[13][8];
+>>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
 
 		// Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
@@ -236,7 +268,22 @@ public class AgentElman extends AgentImpl {
 				+unallocatedEntertainment.getMuseum()[2] + ","
 				+unallocatedEntertainment.getMuseum()[3]);
 
+<<<<<<< HEAD
 		/*calculateUtilities();		
+=======
+		
+
+		ActionListener taskPerformer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				updateAllocation();
+			}
+		};
+		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
+		updateTimer.start();
+		
+		
+		calculateUtilities();		
+>>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
 
 		calculateAllocation();
 
