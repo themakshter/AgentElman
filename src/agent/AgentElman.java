@@ -117,8 +117,13 @@ public class AgentElman extends AgentImpl {
 							tempMaxIndex = a;
 						}						
 					}
-					float tempPrice = (float) Math.cbrt(((double) Math.pow(agent.getGameTime(), 3) / 420000));
-					prices[auction] = tempPrice;
+					float tempPrice = (float) Math.cbrt(((double) Math.pow(tempMax, 3) * agent.getGameTime() / 420000));
+					if(tempPrice < tempMax - 5){
+						prices[auction] = tempPrice;
+					}else{
+						prices[auction] = tempMax - 5;
+					}
+					
 					//float tempPrice = (float) Math.cbrt((double) agent
 					//		.getGameTime() * 100f);
 					// if(tempPrice < ){
