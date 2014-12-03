@@ -27,9 +27,9 @@ public class AgentElman extends AgentImpl {
 	private double[] calculatedUtility;
 	private int[][] clientEntertainment;
 
-	private EntertainmentTracker haveEntertainment,wantEntertainment;
-	private HotelTracker haveHotels,wantHotels;
-	private FlightTracker haveFlights,wantFlights;
+	private EntertainmentTracker haveEntertainment,wantEntertainment, unallocatedEntertainment;
+	private HotelTracker haveHotels,wantHotels, unallocatedHotels;
+	private FlightTracker haveFlights,wantFlights, unallocatedFlights;
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
@@ -170,6 +170,8 @@ public class AgentElman extends AgentImpl {
 			haveEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
+		
+		unallocatedEntertainment = haveEntertainment;
 
 		ArrayList<Client> sortedClients = cc.sort(clients,1);
 		for(Client c: sortedClients) {
@@ -185,6 +187,19 @@ public class AgentElman extends AgentImpl {
 					+ c.getClientPackage().getEntertainments()[3]+
 					" Index: " + c.getIndex());
 		}
+		
+		System.out.println(unallocatedEntertainment.getAlligator()[0] + ","
+				+unallocatedEntertainment.getAlligator()[1] + ","
+				+unallocatedEntertainment.getAlligator()[2] + ","
+				+unallocatedEntertainment.getAlligator()[3]);
+		System.out.println(unallocatedEntertainment.getAmusement()[0] + ","
+				+unallocatedEntertainment.getAmusement()[1] + ","
+				+unallocatedEntertainment.getAmusement()[2] + ","
+				+unallocatedEntertainment.getAmusement()[3]);
+		System.out.println(unallocatedEntertainment.getMuseum()[0] + ","
+				+unallocatedEntertainment.getMuseum()[1] + ","
+				+unallocatedEntertainment.getMuseum()[2] + ","
+				+unallocatedEntertainment.getMuseum()[3]);
 
 		calculateUtilities();		
 
@@ -600,13 +615,38 @@ public class AgentElman extends AgentImpl {
 	}
 
 	private void allocateStartingEnt() {
+		
 		ArrayList<Client> sortedClients = cc.sort(clients,2);
 
-
 		for(Client c : sortedClients) {
-			for(int i = 1;i <= haveEntertainment.getAlligator().length; i++) {
-				if(c.validDay(i)) {
+			for(int i = 1;i <= unallocatedEntertainment.getAlligator().length; i++) {
+				if(c.validDay(i) && unallocatedEntertainment.getAlligator()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
 					c.getClientPackage().setEntertainmentsAt(i,1);
+					unallocatedEntertainment.getAlligator()[i-1]--;
+					break;
+				}
+			}
+		}
+		
+		sortedClients = cc.sort(clients,3);
+		
+		for(Client c : sortedClients) {
+			for(int i = 1;i <= unallocatedEntertainment.getAmusement().length; i++) {
+				if(c.validDay(i) && unallocatedEntertainment.getAmusement()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
+					c.getClientPackage().setEntertainmentsAt(i,2);
+					unallocatedEntertainment.getAmusement()[i-1]--;
+					break;
+				}
+			}
+		}
+		
+		sortedClients = cc.sort(clients,4);
+		
+		for(Client c : sortedClients) {
+			for(int i = 1;i <= unallocatedEntertainment.getMuseum().length; i++) {
+				if(c.validDay(i) && unallocatedEntertainment.getMuseum()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
+					c.getClientPackage().setEntertainmentsAt(i,3);
+					unallocatedEntertainment.getMuseum()[i-1]--;
 					break;
 				}
 			}
