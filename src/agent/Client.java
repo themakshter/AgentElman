@@ -10,6 +10,8 @@ public class Client {
 
 	private int index, inFlight, outFlight, hotel, alligator, amusement,
 	museum, maxUtility, risk, calcualtedUtility;
+	
+	private ClientPackage clientPackage;
 
 	public Client(TACAgent agent,int index) {
 		setIndex(index);
@@ -19,6 +21,7 @@ public class Client {
 		setAlligator(agent.getClientPreference(index, TACAgent.E1));
 		setAmusement(agent.getClientPreference(index, TACAgent.E2));
 		setMuseum(agent.getClientPreference(index, TACAgent.E3));
+		clientPackage = new ClientPackage(this);
 		calculateMaxUtility();
 		calculateRisk();
 	}
@@ -73,6 +76,15 @@ public class Client {
 			}
 		}
 		System.out.println("Risk value : " + risk);
+	}
+	
+	public boolean validDay(int day) {
+		
+		if(day >= inFlight && day < outFlight) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public int getIndex() {
@@ -164,6 +176,14 @@ public class Client {
 			}
 		}
 		return max+1;
+	}
+
+	public ClientPackage getClientPackage() {
+		return clientPackage;
+	}
+
+	public void setClientPackage(ClientPackage clientPackage) {
+		this.clientPackage = clientPackage;
 	}
 }
 

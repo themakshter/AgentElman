@@ -21,16 +21,16 @@ public class AgentElman extends AgentImpl {
 	private static final boolean DEBUG = false;
 
 	private float[] prices, diff, lastAskPrice, lastAskPrice2, lastBidPrice,
-			lastBidPrice2;
+	lastBidPrice2;
 	private int[] utilities, risks;
-	
+
 	private double[] calculatedUtility;
 	private int[][] clientEntertainment;
-	
+
 	private EntertainmentTracker haveEntertainment,wantEntertainment;
 	private HotelTracker haveHotels,wantHotels;
 	private FlightTracker haveFlights,wantFlights;
-	
+
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
 
@@ -141,7 +141,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
-		
+
 
 		// Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
@@ -159,34 +159,44 @@ public class AgentElman extends AgentImpl {
 			// entertainment
 			wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
 		}
-		
+
 		// Set things we own for entertainment
 		for (int i = 1; i < 5; i++) {
-			haveEntertainment.add(
+			haveEntertainment.addAmount(1,i,
 					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
-							agent.TYPE_ALLIGATOR_WRESTLING, i)),i);
-			haveEntertainment.add(agent.getOwn(agent.getAuctionFor(
-					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)),i);
-			haveEntertainment.add(agent.getOwn(agent.getAuctionFor(
-					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)),i);
+							agent.TYPE_ALLIGATOR_WRESTLING, i)));
+			haveEntertainment.addAmount(2,i,agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
+			haveEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
-		
+
 		ArrayList<Client> sortedClients = cc.sort(clients,1);
 		for(Client c: sortedClients) {
 			System.out.println("MaxUtility: " + c.getMaxUtility() + " , Index: " + c.getIndex());
 		}
-				
+
+		allocateStartingEnt();
+
+		for(Client c: clients) {
+			System.out.println("Entertainments: " + c.getClientPackage().getEntertainments()[0]+","
+					+ c.getClientPackage().getEntertainments()[1]+","
+					+ c.getClientPackage().getEntertainments()[2]+","
+					+ c.getClientPackage().getEntertainments()[3]+
+					" Index: " + c.getIndex());
+		}
+
 		calculateUtilities();		
-		
+
 		calculateAllocation();
-		
+
 		calculateRisk();
-		
+
 		calculateUtilOverRisk();
-		
+
 		sendBids();
 	}
-	
+
 	public void updateTrackers(){
 		int amountLeft;
 		for(int i = 0;i < 4;i++){
@@ -194,10 +204,10 @@ public class AgentElman extends AgentImpl {
 				amountLeft = wantEntertainment.subtract(j, i, haveEntertainment.getTicket(j, i));
 			}
 		}
-		
+
 		//TODO: sort out haveStuff and wantStuff
-		
-				
+
+
 	}
 
 	public void gameStopped() {
@@ -235,7 +245,7 @@ public class AgentElman extends AgentImpl {
 					}
 					agent.submitBid(bid);
 				}
-				
+
 				break;
 			case TACAgent.CAT_ENTERTAINMENT:
 				if (alloc < 0) {
@@ -274,8 +284,8 @@ public class AgentElman extends AgentImpl {
 			} else if (quote.getAskPrice() + fear > lastBidPrice[i]
 					&& lastAskPrice[i] != 0) {
 				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second
-																			// order
-																			// change
+				// order
+				// change
 			} else if (lastAskPrice[i] == 0) {
 				diff[i] = 50f;
 			}
@@ -502,7 +512,7 @@ public class AgentElman extends AgentImpl {
 	 * + eType + " on " + auction); agent.setAllocation(auction,
 	 * agent.getAllocation(auction) + 1); } } }
 	 */
-	
+
 	//TODO: complete method
 	private void updateAllocation(){
 		for(int i = 8;i < 15;i++){
@@ -511,13 +521,13 @@ public class AgentElman extends AgentImpl {
 			Quote q = agent.getQuote(i);
 			//if auction closes and we don't have enough, we target the other auction
 			if(own < allocated && q.isAuctionClosed()){
-				
+
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	private void calculateAllocation() {
 		for (Client c : clients) {
 			int inFlight = c.getInFlight();
@@ -552,8 +562,8 @@ public class AgentElman extends AgentImpl {
 
 			int eType = -1;
 			while ((eType = nextEntType(c.getIndex(), eType)) > 0) {
-//				clientEntertainment[c.getIndex()][eType] = agent
-//						.getClientPreference(c.getIndex(), eType);
+				//				clientEntertainment[c.getIndex()][eType] = agent
+				//						.getClientPreference(c.getIndex(), eType);
 				auction = bestEntDay(inFlight, outFlight, eType);
 				log.finer("Adding entertainment " + eType + " on " + auction);
 				agent.setAllocation(auction, agent.getAllocation(auction) + 1);
@@ -588,16 +598,22 @@ public class AgentElman extends AgentImpl {
 			return TACAgent.TYPE_MUSEUM;
 		return -1;
 	}
-	
+
 	private void allocateStartingEnt() {
 		ArrayList<Client> sortedClients = cc.sort(clients,2);
-		
+
+
 		for(Client c : sortedClients) {
-			
+			for(int i = 1;i <= haveEntertainment.getAlligator().length; i++) {
+				if(c.validDay(i)) {
+					c.getClientPackage().setEntertainmentsAt(i,1);
+					break;
+				}
+			}
 		}
-		
+
 	}
-	
+
 
 	// -------------------------------------------------------------------
 	// Only for backward compatibility
