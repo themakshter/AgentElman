@@ -113,30 +113,32 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					float tempMax = 0;
-					int tempMaxIndex = 0;
-					for(int a = 0; a<8; a++){
-						//auction -16
-						if(entertainVal[auction-16][a] > tempMax){
-							tempMax = entertainVal[auction-16][a];
-							tempMaxIndex = a;
-						}						
-					}
-					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
-					if(tempPrice < tempMax - 5){
-						prices[auction] = tempPrice;
-					}else{
-						prices[auction] = Math.max(0, tempMax - 5);
-					}
-						//TODO: fix this because we need to turn this zero only once we get ticket
-						//entertainVal[auction - 16][tempMaxIndex] = 0;
-					
-					//float tempPrice = (float) Math.cbrt((double) agent
-					//		.getGameTime() * 100f);
-					// if(tempPrice < ){
-					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
-					// }
+					prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
 				}
+//					float tempMax = 0;
+//					int tempMaxIndex = 0;
+//					for(int a = 0; a<8; a++){
+//						//auction -16
+//						if(entertainVal[auction-16][a] > tempMax){
+//							tempMax = entertainVal[auction-16][a];
+//							tempMaxIndex = a;
+//						}						
+//					}
+//					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
+//					if(tempPrice < tempMax - 5){
+//						prices[auction] = tempPrice;
+//					}else{
+//						prices[auction] = Math.max(0, tempMax - 5);
+//					}
+//						//TODO: fix this because we need to turn this zero only once we get ticket
+//						//entertainVal[auction - 16][tempMaxIndex] = 0;
+//					
+//					//float tempPrice = (float) Math.cbrt((double) agent
+//					//		.getGameTime() * 100f);
+//					// if(tempPrice < ){
+//					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
+//					// }
+//				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
