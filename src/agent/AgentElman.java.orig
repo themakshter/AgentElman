@@ -256,11 +256,22 @@ public class AgentElman extends AgentImpl {
 		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
 		updateTimer.start();
 		
+<<<<<<< HEAD
+		
+		calculateUtilities();		
+
 */
 		calculateAllocation();
-		calculateUtilOverRisk();
+
 //		calculateRisk();
+
 //		calculateUtilOverRisk();
+
+=======
+>>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
+		calculateAllocation();
+		calculateUtilOverRisk();
+>>>>>>> cf4ecdabfaf360ce409660b6f043918b7014f637
 		sendBids();
 	}
 
