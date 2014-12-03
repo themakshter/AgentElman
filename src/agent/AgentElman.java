@@ -223,7 +223,7 @@ public class AgentElman extends AgentImpl {
 					price = 201;
 					prices[i] = 201f;
 				}//if alloc = 1 or if = 0? //if do additional in non 0 bids remember re-bid rules
-				else if(alloc = 0){
+				else if(alloc == 0){
 					price = 20;
 					prices[i] = 20; 
 					Bid bid = new Bid(i); //make bid here?
@@ -592,7 +592,9 @@ public class AgentElman extends AgentImpl {
 	private void allocateStartingEnt() {
 		ArrayList<Client> sortedClients = cc.sort(clients,2);
 		
-		
+		for(Client c : sortedClients) {
+			
+		}
 		
 	}
 	
