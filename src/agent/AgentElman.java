@@ -108,16 +108,16 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					int tempMax = 0
-					int tempMaxIndex = 0
-					for(a = 0; a<8; a++){
+					int tempMax = 0;
+					int tempMaxIndex = 0;
+					for(int a = 0; a<8; a++){
 						//auction -16
 						if(entertainVal[auction-16][a] > tempMax){
 							tempMax = entertainVal[auction-16][a];
 							tempMaxIndex = a;
 						}						
 					}
-					float tempPrice = (float) Math.cbrt(((double) agent.getGameTime()^3) / 420000);
+					float tempPrice = (float) Math.cbrt(((double) Math.pow(agent.getGameTime(), 3) / 420000));
 					prices[auction] = tempPrice;
 					//float tempPrice = (float) Math.cbrt((double) agent
 					//		.getGameTime() * 100f);
