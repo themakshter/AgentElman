@@ -33,6 +33,8 @@ public class AgentElman extends AgentImpl {
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
+	
+	private int[][] entertainVal;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -52,7 +54,7 @@ public class AgentElman extends AgentImpl {
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
 		
-		EntertainVal = new int[12][8]
+		entertainVal = new int[13][8];
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -161,7 +163,14 @@ public class AgentElman extends AgentImpl {
 			// entertainment
 			//wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
 			for (int j = 1; j < 5; j++) {
-				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, i,1)
+				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, j,1)
+				
+				if(c.getInFlight() =< j && c.getOutFlight() > j){
+					EntertainVal[j][i] = agent.getClientPreferance(i, TACAgent.E1);
+					EntertainVal[j+4][i] = agent.getClientPreferance(i, TACAgent.E2);
+					EntertainVal[j+8][i] = agent.getClientPreferance(i, TACAgent.E3);
+				}
+				
 			}
 		}
 
