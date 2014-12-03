@@ -170,7 +170,11 @@ public class AgentElman extends AgentImpl {
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)),i);
 		}
 		
-		
+		ClientComparator cc = new ClientComparator();
+		ArrayList<Client> sortedClients = cc.sortByMaxUtility(clients,1);
+		for(Client c: sortedClients) {
+			System.out.println("MaxUtility: " + c.getMaxUtility() + " , Index: " + c.getIndex());
+		}
 				
 		calculateUtilities();		
 		
