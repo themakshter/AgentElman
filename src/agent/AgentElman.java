@@ -33,6 +33,8 @@ public class AgentElman extends AgentImpl {
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
+	
+	private int[][] entertainVal;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -45,13 +47,14 @@ public class AgentElman extends AgentImpl {
 		lastBidPrice = new float[28];
 		lastBidPrice2 = new float[28];
 		clientEntertainment = new int[8][3];
-		clients = new ArrayList<Client>();
 		haveEntertainment = new EntertainmentTracker();
 		wantEntertainment = new EntertainmentTracker();
 		haveHotels = new HotelTracker();
 		wantHotels = new HotelTracker();
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
+		
+		entertainVal = new int[13][8];
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -141,6 +144,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
+		clients = new ArrayList<Client>();
 
 
 		// Set Clients
@@ -157,7 +161,17 @@ public class AgentElman extends AgentImpl {
 			wantHotels.addDuration(1,c.getInFlight(), c.getOutFlight());
 
 			// entertainment
-			wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
+			//wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
+			for (int j = 1; j < 5; j++) {
+				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, j,1)
+				
+				if(c.getInFlight() =< j && c.getOutFlight() > j){
+					EntertainVal[j][i] = agent.getClientPreferance(i, TACAgent.E1);
+					EntertainVal[j+4][i] = agent.getClientPreferance(i, TACAgent.E2);
+					EntertainVal[j+8][i] = agent.getClientPreferance(i, TACAgent.E3);
+				}
+				
+			}
 		}
 
 		// Set things we own for entertainment
@@ -259,6 +273,8 @@ public class AgentElman extends AgentImpl {
 								+ agent.getOwn(i));
 					}
 					agent.submitBid(bid);
+					price = 0;
+					prices[i] = 0;
 				}
 
 				break;
