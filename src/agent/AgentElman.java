@@ -218,15 +218,28 @@ public class AgentElman extends AgentImpl {
 				if (alloc > 0) {
 					price = 201;
 					prices[i] = 201f;
+				}//if alloc = 1 or if = 0? //if do additional in non 0 bids remember re-bid rules
+				else if(alloc = 0){
+					price = 20;
+					prices[i] = 20; 
+					Bid bid = new Bid(i); //make bid here?
+					bid.addBidPoint(1, price);
+					if (DEBUG) {
+						log.finest("submitting bid with alloc="
+								+ agent.getAllocation(i) + " own="
+								+ agent.getOwn(i));
+					}
+					agent.submitBid(bid);
 				}
+				
 				break;
 			case TACAgent.CAT_ENTERTAINMENT:
 				if (alloc < 0) {
-					price = 200;
-					prices[i] = 200f;
+					price = 120;
+					prices[i] = 120f;
 				} else if (alloc > 0) {
-					price = 50;
-					prices[i] = 50f;
+					price = 0;
+					prices[i] = 0f;//needs change
 				}
 				break;
 			default:
@@ -234,14 +247,14 @@ public class AgentElman extends AgentImpl {
 			}
 			if (price > 0) {
 				Bid bid = new Bid(i);
-				bid.addBidPoint(alloc, price);
+				bid.addBidPoint(alloc, price);//alloc + 1 ?
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
 							+ agent.getAllocation(i) + " own="
 							+ agent.getOwn(i));
 				}
 				agent.submitBid(bid);
-				lastBidPrice2[i] = lastBidPrice2[i];
+				lastBidPrice2[i] = lastBidPrice2[i]; //this always 0?
 				lastBidPrice[i] = price;
 			}
 		}
