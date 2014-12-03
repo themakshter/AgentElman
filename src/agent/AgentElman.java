@@ -3,12 +3,15 @@ package agent;
 import se.sics.tac.aw.*;
 import se.sics.tac.util.ArgEnumerator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
+
+import javax.swing.Timer;
 
 public class AgentElman extends AgentImpl {
 
@@ -33,6 +36,9 @@ public class AgentElman extends AgentImpl {
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
+	
+	Timer updateTimer;
+	
 	
 	private int[][] entertainVal;
 
@@ -163,12 +169,12 @@ public class AgentElman extends AgentImpl {
 			// entertainment
 			//wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
 			for (int j = 1; j < 5; j++) {
-				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, j,1)
+				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, j,1);
 				
-				if(c.getInFlight() =< j && c.getOutFlight() > j){
-					EntertainVal[j][i] = agent.getClientPreferance(i, TACAgent.E1);
-					EntertainVal[j+4][i] = agent.getClientPreferance(i, TACAgent.E2);
-					EntertainVal[j+8][i] = agent.getClientPreferance(i, TACAgent.E3);
+				if(c.getInFlight() <= j && c.getOutFlight() > j){
+					entertainVal[j][i] = agent.getClientPreference(i, TACAgent.E1);
+					entertainVal[j+4][i] = agent.getClientPreference(i, TACAgent.E2);
+					entertainVal[j+8][i] = agent.getClientPreference(i, TACAgent.E3);
 				}
 				
 			}
@@ -200,6 +206,17 @@ public class AgentElman extends AgentImpl {
 					" Index: " + c.getIndex());
 		}
 
+		
+
+		ActionListener taskPerformer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				updateAllocation();
+			}
+		};
+		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
+		updateTimer.start();
+		
+		
 		calculateUtilities();		
 
 		calculateAllocation();
