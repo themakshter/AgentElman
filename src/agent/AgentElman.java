@@ -207,7 +207,7 @@ public class AgentElman extends AgentImpl {
 		}
 
 		// Set things we own for entertainment
-		/*for (int i = 1; i < 5; i++) {
+		for (int i = 1; i < 5; i++) {
 			haveEntertainment.addAmount(1,i,
 					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
 							agent.TYPE_ALLIGATOR_WRESTLING, i)));
@@ -215,7 +215,7 @@ public class AgentElman extends AgentImpl {
 					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
 			haveEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
-		}*/
+		}
 		
 		for (int i = 1; i < 5; i++) {
 			unallocatedEntertainment.addAmount(1,i,
@@ -229,19 +229,6 @@ public class AgentElman extends AgentImpl {
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
 		
-		System.out.println(unallocatedEntertainment.getAlligator()[0] + ","
-				+unallocatedEntertainment.getAlligator()[1] + ","
-				+unallocatedEntertainment.getAlligator()[2] + ","
-				+unallocatedEntertainment.getAlligator()[3]);
-		System.out.println(unallocatedEntertainment.getAmusement()[0] + ","
-				+unallocatedEntertainment.getAmusement()[1] + ","
-				+unallocatedEntertainment.getAmusement()[2] + ","
-				+unallocatedEntertainment.getAmusement()[3]);
-		System.out.println(unallocatedEntertainment.getMuseum()[0] + ","
-				+unallocatedEntertainment.getMuseum()[1] + ","
-				+unallocatedEntertainment.getMuseum()[2] + ","
-				+unallocatedEntertainment.getMuseum()[3]);
-		
 		allocateStartingEnt();
 
 		for(Client c: clients) {
@@ -251,24 +238,10 @@ public class AgentElman extends AgentImpl {
 					+ c.getClientPackage().getEntertainments()[3]+
 					" Index: " + c.getIndex());
 		}
-		
-		System.out.println(unallocatedEntertainment.getAlligator()[0] + ","
-				+unallocatedEntertainment.getAlligator()[1] + ","
-				+unallocatedEntertainment.getAlligator()[2] + ","
-				+unallocatedEntertainment.getAlligator()[3]);
-		System.out.println(unallocatedEntertainment.getAmusement()[0] + ","
-				+unallocatedEntertainment.getAmusement()[1] + ","
-				+unallocatedEntertainment.getAmusement()[2] + ","
-				+unallocatedEntertainment.getAmusement()[3]);
-		System.out.println(unallocatedEntertainment.getMuseum()[0] + ","
-				+unallocatedEntertainment.getMuseum()[1] + ","
-				+unallocatedEntertainment.getMuseum()[2] + ","
-				+unallocatedEntertainment.getMuseum()[3]);
 
 
 		/*calculateUtilities();		
-=======
-		
+
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -280,13 +253,13 @@ public class AgentElman extends AgentImpl {
 		
 		
 		calculateUtilities();		
->>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
 
+*/
 		calculateAllocation();
 
-		calculateRisk();
+//		calculateRisk();
 
-		calculateUtilOverRisk();*/
+//		calculateUtilOverRisk();
 
 		sendBids();
 	}
