@@ -116,17 +116,13 @@ public class AgentElman extends AgentImpl {
 					float tempMax = 0;
 					int tempMaxIndex = 0;
 					for(int a = 0; a<8; a++){
-						System.out.println("Client " + (a+1));
 						//auction -16
-						System.out.println("temp max " + tempMax);
-						System.out.println("entertain val " + entertainVal[auction - 16][a]);
 						if(entertainVal[auction-16][a] > tempMax){
 							tempMax = entertainVal[auction-16][a];
 							tempMaxIndex = a;
 						}						
 					}
 					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
-					System.out.println("Price : " + tempPrice);
 					if(tempPrice < tempMax - 5){
 						prices[auction] = tempPrice;
 					}else{
@@ -626,6 +622,7 @@ public class AgentElman extends AgentImpl {
 		for (Client c : clients) {
 			int inFlight = c.getInFlight();
 			int outFlight = c.getOutFlight();
+			int duration = outFlight - inFlight;
 			int hotel = c.getHotel();
 			int type;
 
@@ -641,7 +638,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)
-			if (hotel > 70) {
+			if (hotel > 75 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
