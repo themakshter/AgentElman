@@ -271,9 +271,10 @@ public class AgentElman extends AgentImpl {
 				+unallocatedEntertainment.getMuseum()[3]);
 
 
-		/*calculateUtilities();		
-=======
+		calculateAllocation();
+		sendBids();
 		
+		/*calculateUtilities();		
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -282,11 +283,10 @@ public class AgentElman extends AgentImpl {
 		};
 		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
 		updateTimer.start();
-		
->>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
-		calculateAllocation();
 		calculateUtilOverRisk();
-		sendBids();
+		*/
+
+		
 	}
 
 	public void updateTrackers(){
