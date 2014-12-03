@@ -171,7 +171,7 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		ClientComparator cc = new ClientComparator();
-		ArrayList<Client> sortedClients = cc.sortByMaxUtility(clients,1);
+		ArrayList<Client> sortedClients = cc.sort(clients,1);
 		for(Client c: sortedClients) {
 			System.out.println("MaxUtility: " + c.getMaxUtility() + " , Index: " + c.getIndex());
 		}

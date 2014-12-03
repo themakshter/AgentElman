@@ -173,6 +173,10 @@ class ClientComparator implements Comparator<Client> {
 		return c1.getMaxUtility() - c2.getMaxUtility();
 	}
 
+	public int compareHotel(Client c1, Client c2) {
+		return c1.getHotel() - c2.getHotel();
+	}
+
 	public int compareAlligator(Client c1, Client c2) {
 		return c1.getAlligator() - c2.getAlligator();
 	}
@@ -192,8 +196,8 @@ class ClientComparator implements Comparator<Client> {
 	 * 2 - Alligator Wrestling Utility
 	 * 3 - Amusement Utility
 	 * 4 - Museum Utility
-	*/
-	public ArrayList<Client> sortByMaxUtility(ArrayList<Client> unsortedList,int type) {
+	 */
+	public ArrayList<Client> sort(ArrayList<Client> unsortedList,int type) {
 		ArrayList<Client> sortedList = new ArrayList<Client>();
 
 		for(Client c1: unsortedList) {
@@ -207,35 +211,43 @@ class ClientComparator implements Comparator<Client> {
 				int i = 0;
 				int compareResult = 0;
 				switch(type) {
-				case 1 : 	compareResult = compare(c1,sortedList.get(i));
-							break;
-				case 2 : 	compareResult = compareAlligator(c1,sortedList.get(i));
-							break;
-				case 3 : 	compareResult = compareAmusement(c1,sortedList.get(i));
-							break;
-				case 4 : 	compareResult = compareMuseum(c1,sortedList.get(i));
-							break;
+				case 1 : 	
+					compareResult = compare(c1,sortedList.get(i));
+					break;
+				case 2 : 	
+					compareResult = compareAlligator(c1,sortedList.get(i));
+					break;
+				case 3 : 	
+					compareResult = compareAmusement(c1,sortedList.get(i));
+					break;
+				case 4 : 	
+					compareResult = compareMuseum(c1,sortedList.get(i));
+					break;
 				}			
 
 				while (compareResult < 0) {
 					i++;			
 					if (i == sortedList.size()) {
-						
+
 						break;
 					}
-					
+
 					switch(type) {
-					case 1 : 	compareResult = compare(c1,sortedList.get(i));
-								break;
-					case 2 : 	compareResult = compareAlligator(c1,sortedList.get(i));
-								break;
-					case 3 : 	compareResult = compareAmusement(c1,sortedList.get(i));
-								break;
-					case 4 : 	compareResult = compareMuseum(c1,sortedList.get(i));
-								break;
+					case 1 : 	
+						compareResult = compare(c1,sortedList.get(i));
+						break;
+					case 2 : 	
+						compareResult = compareAlligator(c1,sortedList.get(i));
+						break;
+					case 3 : 	
+						compareResult = compareAmusement(c1,sortedList.get(i));
+						break;
+					case 4 : 	
+						compareResult = compareMuseum(c1,sortedList.get(i));
+						break;
 					}	
 				}
-				
+
 				if (i == sortedList.size()) {
 					sortedList.add(c1);
 				} else {
@@ -244,8 +256,6 @@ class ClientComparator implements Comparator<Client> {
 
 			}
 		}
-
-
 
 		return sortedList;
 	}
