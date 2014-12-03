@@ -123,6 +123,7 @@ public class AgentElman extends AgentImpl {
 					}else{
 						prices[auction] = tempMax - 5;
 					}
+					entertainVal[auction - 16][tempMaxIndex] = 0;
 					
 					//float tempPrice = (float) Math.cbrt((double) agent
 					//		.getGameTime() * 100f);
@@ -241,7 +242,7 @@ public class AgentElman extends AgentImpl {
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				calculateAllocation();
+				updateAllocation();
 			}
 		};
 		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
@@ -593,7 +594,6 @@ public class AgentElman extends AgentImpl {
 
 
 	private void calculateAllocation() {
-		agent.clearAllocation();
 		for (Client c : clients) {
 			int inFlight = c.getInFlight();
 			int outFlight = c.getOutFlight();
@@ -617,33 +617,6 @@ public class AgentElman extends AgentImpl {
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
 			}
-
-			 
-			// a switch, with it we will change the hotel type
-			boolean current = (type == TACAgent.TYPE_GOOD_HOTEL);
-			for (int d = inFlight; d < outFlight; d++) {
-				// cheap hotels start at 8:
-				int start = 8;
-				// expensive hotels start at 12:
-				if (current)
-					start = 12;
-				boolean enough = (agent.getOwn(start + d) > (c.getIndex() + 1));
-				// Is the auction closed?
-				Quote quote = agent.getQuote(start + d);
-				if (quote.isAuctionClosed() && !enough) {
-					// Change the switch to change the hotel type:
-					current = !current;
-					// don't continue:
-					break;
-				}
-			}
-			// Change the hotel type with the current switch:
-			if (current) {
-				type = TACAgent.TYPE_GOOD_HOTEL;
-			} else {
-				type = TACAgent.TYPE_CHEAP_HOTEL;
-			}
-
 
 			// allocate a hotel night for each day that the agent stays
 			for (int d = inFlight; d < outFlight; d++) {
