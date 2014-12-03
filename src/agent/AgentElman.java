@@ -52,6 +52,8 @@ public class AgentElman extends AgentImpl {
 		wantHotels = new HotelTracker();
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
+		
+		EntertainVal = new int[12][8]
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -157,7 +159,10 @@ public class AgentElman extends AgentImpl {
 			wantHotels.addDuration(1,c.getInFlight(), c.getOutFlight());
 
 			// entertainment
-			wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
+			//wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
+			for (int j = 1; j < 5; j++) {
+				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, i,1)
+			}
 		}
 
 		// Set things we own for entertainment
