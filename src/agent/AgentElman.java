@@ -61,13 +61,11 @@ public class AgentElman extends AgentImpl {
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
 		
-<<<<<<< HEAD
+
 		unallocatedEntertainment = new EntertainmentTracker();
 		
 		entertainVal = new int[13][8];
-=======
-		
->>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
+
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -174,13 +172,12 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
-<<<<<<< HEAD
+
 		init(null);
 
-=======
 		clients = new ArrayList<Client>();
 		entertainVal = new int[13][8];
->>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
+
 
 		// Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
@@ -268,7 +265,7 @@ public class AgentElman extends AgentImpl {
 				+unallocatedEntertainment.getMuseum()[2] + ","
 				+unallocatedEntertainment.getMuseum()[3]);
 
-<<<<<<< HEAD
+
 		/*calculateUtilities();		
 =======
 		
