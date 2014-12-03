@@ -53,6 +53,7 @@ public class AgentElman extends AgentImpl {
 		lastBidPrice = new float[28];
 		lastBidPrice2 = new float[28];
 		clientEntertainment = new int[8][3];
+		clients = new ArrayList<Client>();
 		haveEntertainment = new EntertainmentTracker();
 		wantEntertainment = new EntertainmentTracker();
 		haveHotels = new HotelTracker();
@@ -60,7 +61,11 @@ public class AgentElman extends AgentImpl {
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
 		
+
+		unallocatedEntertainment = new EntertainmentTracker();
 		
+		entertainVal = new int[13][8];
+
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -172,8 +177,12 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStarted() {
+
+		init(null);
+
 		clients = new ArrayList<Client>();
 		entertainVal = new int[13][8];
+
 
 		// Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
@@ -203,7 +212,7 @@ public class AgentElman extends AgentImpl {
 		}
 
 		// Set things we own for entertainment
-		for (int i = 1; i < 5; i++) {
+		/*for (int i = 1; i < 5; i++) {
 			haveEntertainment.addAmount(1,i,
 					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
 							agent.TYPE_ALLIGATOR_WRESTLING, i)));
@@ -211,15 +220,33 @@ public class AgentElman extends AgentImpl {
 					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
 			haveEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
+		}*/
+		
+		for (int i = 1; i < 5; i++) {
+			unallocatedEntertainment.addAmount(1,i,
+					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
+							agent.TYPE_ALLIGATOR_WRESTLING, i)));
+			
+			unallocatedEntertainment.addAmount(2,i,agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
+			
+			unallocatedEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
+					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
 		
-		unallocatedEntertainment = haveEntertainment;
-
-		ArrayList<Client> sortedClients = cc.sort(clients,1);
-		for(Client c: sortedClients) {
-			System.out.println("MaxUtility: " + c.getMaxUtility() + " , Index: " + c.getIndex());
-		}
-
+		System.out.println(unallocatedEntertainment.getAlligator()[0] + ","
+				+unallocatedEntertainment.getAlligator()[1] + ","
+				+unallocatedEntertainment.getAlligator()[2] + ","
+				+unallocatedEntertainment.getAlligator()[3]);
+		System.out.println(unallocatedEntertainment.getAmusement()[0] + ","
+				+unallocatedEntertainment.getAmusement()[1] + ","
+				+unallocatedEntertainment.getAmusement()[2] + ","
+				+unallocatedEntertainment.getAmusement()[3]);
+		System.out.println(unallocatedEntertainment.getMuseum()[0] + ","
+				+unallocatedEntertainment.getMuseum()[1] + ","
+				+unallocatedEntertainment.getMuseum()[2] + ","
+				+unallocatedEntertainment.getMuseum()[3]);
+		
 		allocateStartingEnt();
 
 		for(Client c: clients) {
@@ -243,6 +270,9 @@ public class AgentElman extends AgentImpl {
 				+unallocatedEntertainment.getMuseum()[2] + ","
 				+unallocatedEntertainment.getMuseum()[3]);
 
+
+		/*calculateUtilities();		
+=======
 		
 
 		ActionListener taskPerformer = new ActionListener() {
@@ -253,7 +283,9 @@ public class AgentElman extends AgentImpl {
 		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
 		updateTimer.start();
 		
+>>>>>>> 831614f5a76948d98493e5377d938a7cfe66cb1c
 		calculateAllocation();
+		calculateUtilOverRisk();
 		sendBids();
 	}
 
@@ -669,7 +701,7 @@ public class AgentElman extends AgentImpl {
 			for(int i = 1;i <= unallocatedEntertainment.getAlligator().length; i++) {
 				if(c.validDay(i) && unallocatedEntertainment.getAlligator()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
 					c.getClientPackage().setEntertainmentsAt(i,1);
-					unallocatedEntertainment.getAlligator()[i-1]--;
+					unallocatedEntertainment.subtract(1, i, 1);
 					break;
 				}
 			}
@@ -681,7 +713,7 @@ public class AgentElman extends AgentImpl {
 			for(int i = 1;i <= unallocatedEntertainment.getAmusement().length; i++) {
 				if(c.validDay(i) && unallocatedEntertainment.getAmusement()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
 					c.getClientPackage().setEntertainmentsAt(i,2);
-					unallocatedEntertainment.getAmusement()[i-1]--;
+					unallocatedEntertainment.subtract(2, i, 1);
 					break;
 				}
 			}
@@ -693,7 +725,7 @@ public class AgentElman extends AgentImpl {
 			for(int i = 1;i <= unallocatedEntertainment.getMuseum().length; i++) {
 				if(c.validDay(i) && unallocatedEntertainment.getMuseum()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
 					c.getClientPackage().setEntertainmentsAt(i,3);
-					unallocatedEntertainment.getMuseum()[i-1]--;
+					unallocatedEntertainment.subtract(3, i, 1);
 					break;
 				}
 			}

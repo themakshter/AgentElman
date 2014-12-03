@@ -4,15 +4,21 @@ public class EntertainmentTracker extends Tracker {
 	private int[] alligator = { 0, 0, 0, 0 };
 	private int[] amusement = { 0, 0, 0, 0 };
 	private int[] museum = { 0, 0, 0, 0 };
-
+	
+	public EntertainmentTracker() {
+		alligator = new int[4];
+		amusement = new int[4];
+		museum = new int[4];
+	}
+	
 	public int subtract(int type, int day, int amount) {
 		switch (type) {
 		case 1:
-			return subtract(alligator, day, amount);
+			return subtract(alligator, day-1, amount);
 		case 2:
-			return subtract(amusement, day, amount);
+			return subtract(amusement, day-1, amount);
 		case 3:
-			return subtract(museum, day, amount);
+			return subtract(museum, day-1, amount);
 		}
 		return 0;
 	}
@@ -35,10 +41,13 @@ public class EntertainmentTracker extends Tracker {
 		switch (type) {
 		case 1:
 			alligator[day - 1]++;
+			break;
 		case 2:
 			amusement[day - 1]++;
+			break;
 		case 3:
 			museum[day - 1]++;
+			break;
 		}
 
 	}
