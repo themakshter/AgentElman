@@ -131,6 +131,10 @@ public class ClientPackage {
 		this.entertainments = entertainments;
 	}
 	
+	public int getEntertainmentsAt(int day) {
+		return entertainments[day-1];
+	}
+	
 	public void setEntertainmentsAt(int day,int value) {
 		entertainments[day-1] = value;
 	}
