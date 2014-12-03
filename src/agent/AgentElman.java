@@ -60,7 +60,7 @@ public class AgentElman extends AgentImpl {
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
 		
-		entertainVal = new int[13][8];
+		
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -108,10 +108,21 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					float tempPrice = (float) Math.cbrt((double) agent
-							.getGameTime() * 100f);
+					int tempMax = 0
+					int tempMaxIndex = 0
+					for(a = 0; a<8; a++){
+						//auction -16
+						if(entertainVal[auction-16][a] > tempMax){
+							tempMax = entertainVal[auction-16][a];
+							tempMaxIndex = a;
+						}						
+					}
+					float tempPrice = (float) Math.cbrt(((double) agent.getGameTime()^3) / 420000);
+					prices[auction] = tempPrice;
+					//float tempPrice = (float) Math.cbrt((double) agent
+					//		.getGameTime() * 100f);
 					// if(tempPrice < ){
-					prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
+					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
 					// }
 				}
 				bid.addBidPoint(alloc, prices[auction]);
@@ -151,7 +162,7 @@ public class AgentElman extends AgentImpl {
 
 	public void gameStarted() {
 		clients = new ArrayList<Client>();
-
+		entertainVal = new int[13][8];
 
 		// Set Clients
 		log.fine("Game " + agent.getGameID() + " started!");
