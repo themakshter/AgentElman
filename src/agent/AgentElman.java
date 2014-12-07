@@ -78,6 +78,7 @@ public class AgentElman extends AgentImpl {
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
 			int alloc = agent.getAllocation(auction);
 			float fear = 5.0f;
+			//if(alloc > 2){fear = fear + 10} //something like this - maybe 3,20?
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction))
 					&& quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
@@ -350,7 +351,7 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
-	private void updateBids() {
+	private void updateBids() { //may want to pass fear here if changed
 		float fear = 5.0f;
 		float safety = 4.0f;
 		for (int i = 8, n = 15; i < n; i++) {
@@ -359,9 +360,8 @@ public class AgentElman extends AgentImpl {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
 			} else if (quote.getAskPrice() + fear > lastBidPrice[i]
 					&& lastAskPrice[i] != 0) {
-				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second
-				// order
-				// change
+				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second order change? [want + fear??]
+				//diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety; //doing this way would rebid for top?
 			} else if (lastAskPrice[i] == 0) {
 				diff[i] = 50f;
 			}
