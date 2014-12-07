@@ -41,6 +41,8 @@ public class AgentElman extends AgentImpl {
 	
 	
 	private int[][] entertainVal;
+	
+	private int[] lastAlloc;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -65,6 +67,8 @@ public class AgentElman extends AgentImpl {
 		unallocatedEntertainment = new EntertainmentTracker();
 		
 		entertainVal = new int[13][8];
+		
+		lastAlloc = new int[28];
 
 	}
 
@@ -74,6 +78,7 @@ public class AgentElman extends AgentImpl {
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
 			int alloc = agent.getAllocation(auction);
 			float fear = 5.0f;
+			//if(alloc > 2){fear = fear + 10} //something like this - maybe 3,20?
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction))
 					&& quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
@@ -130,8 +135,10 @@ public class AgentElman extends AgentImpl {
 //					}else{
 //						prices[auction] = Math.max(0, tempMax - 5);
 //					}
-//						//TODO: fix this because we need to turn this zero only once we get ticket
-//						//entertainVal[auction - 16][tempMaxIndex] = 0;
+						//if(lastAlloc[auction] < alloc){
+//							//TODO: fix this because we need to turn this zero only once we get ticket
+//							//entertainVal[auction - 16][tempMaxIndex] = 0; }
+						// lastAlloc[i] = alloc;
 //					
 //					//float tempPrice = (float) Math.cbrt((double) agent
 //					//		.getGameTime() * 100f);
@@ -262,8 +269,10 @@ public class AgentElman extends AgentImpl {
 		calculateRisk();	
 		calculateUtilOverRisk();
 		*/
-
 		
+		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
+			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
+		}
 	}
 
 	public void updateTrackers(){
@@ -348,7 +357,7 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
-	private void updateBids() {
+	private void updateBids() { //may want to pass fear here if changed
 		float fear = 5.0f;
 		float safety = 4.0f;
 		for (int i = 8, n = 15; i < n; i++) {
@@ -357,9 +366,8 @@ public class AgentElman extends AgentImpl {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
 			} else if (quote.getAskPrice() + fear > lastBidPrice[i]
 					&& lastAskPrice[i] != 0) {
-				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second
-				// order
-				// change
+				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second order change? [want + fear??]
+				//diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety; //doing this way would rebid for top?
 			} else if (lastAskPrice[i] == 0) {
 				diff[i] = 50f;
 			}
