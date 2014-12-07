@@ -41,6 +41,8 @@ public class AgentElman extends AgentImpl {
 	
 	
 	private int[][] entertainVal;
+	
+	private int[] lastAlloc;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -65,6 +67,8 @@ public class AgentElman extends AgentImpl {
 		unallocatedEntertainment = new EntertainmentTracker();
 		
 		entertainVal = new int[13][8];
+		
+		lastAlloc = new int[28];
 
 	}
 
@@ -130,8 +134,10 @@ public class AgentElman extends AgentImpl {
 //					}else{
 //						prices[auction] = Math.max(0, tempMax - 5);
 //					}
-//						//TODO: fix this because we need to turn this zero only once we get ticket
-//						//entertainVal[auction - 16][tempMaxIndex] = 0;
+						//if(lastAlloc[auction] < alloc){
+//							//TODO: fix this because we need to turn this zero only once we get ticket
+//							//entertainVal[auction - 16][tempMaxIndex] = 0; }
+						// lastAlloc[i] = alloc;
 //					
 //					//float tempPrice = (float) Math.cbrt((double) agent
 //					//		.getGameTime() * 100f);
@@ -259,8 +265,10 @@ public class AgentElman extends AgentImpl {
 		calculateRisk();	
 		calculateUtilOverRisk();
 		*/
-
 		
+		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
+			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
+		}
 	}
 
 	public void updateTrackers(){
