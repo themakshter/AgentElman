@@ -290,10 +290,13 @@ public class AgentElman extends AgentImpl {
 
 	public void gameStopped() {
 		log.fine("Game Stopped!");
+		System.out.println(haveHotels.toString());
+		System.out.println();
 	}
 
 	public void auctionClosed(int auction) {
 		log.fine("*** Auction " + auction + " closed!");
+		System.out.println(agent.getAuctionType(auction));
 		haveHotels.addAmount(agent.getAuctionType(auction), agent.getAuctionDay(auction), agent.getOwn(auction));
 		System.out.println(haveHotels.toString());
 		System.out.println();
