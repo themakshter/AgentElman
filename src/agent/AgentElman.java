@@ -147,9 +147,12 @@ public class AgentElman extends AgentImpl {
 				}
 				agent.submitBid(bid);
 			}
+		} else if (auctionCategory == TACAgent.CAT_FLIGHT) {
+			//System.out.println("Flights updated " + quote.getAskPrice());
 		}
 	}
 
+	
 	public void quoteUpdated(int auctionCategory) {
 		log.fine("All quotes for "
 				+ agent.auctionCategoryToString(auctionCategory)
@@ -282,6 +285,9 @@ public class AgentElman extends AgentImpl {
 
 	public void auctionClosed(int auction) {
 		log.fine("*** Auction " + auction + " closed!");
+		haveHotels.addAmount(agent.getAuctionType(auction), agent.getAuctionDay(auction), agent.getOwn(auction));
+		System.out.println(haveHotels.toString());
+		System.out.println();
 	}
 
 	private void sendBids() {
@@ -605,7 +611,7 @@ public class AgentElman extends AgentImpl {
 			int type;
 
 			// Get the flight preferences auction and remember that we are
-			// going to buy tickets for these days. (inflight=1, outflight=0)
+			// going to buy tickets for these days. (inflight=1, outflight=0)		
 			int auction = agent.getAuctionFor(TACAgent.CAT_FLIGHT,
 					TACAgent.TYPE_INFLIGHT, inFlight);
 			agent.setAllocation(auction, agent.getAllocation(auction) + 1);
@@ -639,6 +645,7 @@ public class AgentElman extends AgentImpl {
 			}
 
 		}
+		
 	}
 
 	private int bestEntDay(int inFlight, int outFlight, int type) {

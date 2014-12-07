@@ -108,5 +108,32 @@ public class EntertainmentTracker extends Tracker {
 	public void setMuseum(int[] museum) {
 		this.museum = museum;
 	}
+	
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Entertainment Tracker:\n");
+		sb.append("\n");
+		sb.append("Aligator:\t");
+		
+		for(int i = 0; i<alligator.length;i++) {
+			sb.append(alligator[i] + " ");
+			
+		}
+		sb.append("\n");
+		sb.append("Amusement:\t");
+		for(int i = 0; i<amusement.length;i++) {
+			sb.append(amusement[i] + " ");
+		}
+		
+		sb.append("\n");
+		sb.append("Museum:\t");
+		for(int i = 0; i<museum.length;i++) {
+			sb.append(museum[i] + " ");
+		}
+		
+		return sb.toString();
+	}	
 
 }

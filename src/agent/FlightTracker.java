@@ -45,6 +45,20 @@ public class FlightTracker extends Tracker {
 		return 0;
 	}
 	
-	
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 0; i<inFlight.length;i++) {
+			sb.append(inFlight[i] + " ");
+			
+		}
+		sb.append("\n");
+		for(int i = 0; i<outFlight.length;i++) {
+			sb.append(outFlight[i] + " ");
+		}
+		
+		return sb.toString();
+	}
 	
 }

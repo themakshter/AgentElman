@@ -47,4 +47,25 @@ public class HotelTracker extends Tracker {
 		}
 		return 0;
 	}
+	
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Hotel Tracker:\n");
+		sb.append("\n");
+		sb.append("Tampa Towers:\t\t");
+		
+		for(int i = 0; i<towers.length;i++) {
+			sb.append(towers[i] + " ");
+			
+		}
+		sb.append("\n");
+		sb.append("Shoreline Shanty:\t");
+		for(int i = 0; i<shanty.length;i++) {
+			sb.append(shanty[i] + " ");
+		}
+		
+		return sb.toString();
+	}
 }
