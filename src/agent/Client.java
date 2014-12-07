@@ -86,7 +86,13 @@ public class Client {
 			return false;
 		}
 	}
+	
+	public void addHotelToPackage(int day, int type) {
+		clientPackage.addHotel(day, type);
+	}
 
+	
+	//GETTERS AND SETTERS
 	public int getIndex() {
 		return index;
 	}
@@ -216,6 +222,7 @@ class ClientComparator implements Comparator<Client> {
 	 * 2 - Alligator Wrestling Utility
 	 * 3 - Amusement Utility
 	 * 4 - Museum Utility
+	 * 5 - Hotel Utility
 	 */
 	public ArrayList<Client> sort(ArrayList<Client> unsortedList,int type) {
 		ArrayList<Client> sortedList = new ArrayList<Client>();
@@ -243,6 +250,9 @@ class ClientComparator implements Comparator<Client> {
 				case 4 : 	
 					compareResult = compareMuseum(c1,sortedList.get(i));
 					break;
+				case 5 :
+					compareResult = compareHotel(c1,sortedList.get(i));
+					break;
 				}			
 
 				while (compareResult < 0) {
@@ -264,6 +274,9 @@ class ClientComparator implements Comparator<Client> {
 						break;
 					case 4 : 	
 						compareResult = compareMuseum(c1,sortedList.get(i));
+						break;
+					case 5 :
+						compareResult = compareHotel(c1,sortedList.get(i));
 						break;
 					}	
 				}

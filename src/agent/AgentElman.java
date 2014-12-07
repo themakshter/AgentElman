@@ -296,10 +296,33 @@ public class AgentElman extends AgentImpl {
 
 	public void auctionClosed(int auction) {
 		log.fine("*** Auction " + auction + " closed!");
-		System.out.println(agent.getAuctionType(auction));
-		haveHotels.addAmount(agent.getAuctionType(auction), agent.getAuctionDay(auction), agent.getOwn(auction));
-		System.out.println(haveHotels.toString());
-		System.out.println();
+		
+		int type = agent.getAuctionType(auction);
+		int noOwned = agent.getOwn(auction);
+		int day = agent.getAuctionDay(auction);
+		
+		haveHotels.addAmount(type, day, noOwned);
+		unallocatedHotels.addAmount(type, day, noOwned);
+		
+		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
+		
+		if (type == 1) {
+			
+			int noToAllocate = noOwned;
+			
+			for( Client c : sortedHotelUtil) {	
+				if( noToAllocate <=0 ) {
+					break;
+				}
+				
+				if(c.validDay(day)) {
+					c.addHotelToPackage(day, type);
+					unallocatedHotels.subtract(type, day, 1);
+					noToAllocate--;
+				}				
+			}
+		}
+		
 	}
 
 	private void sendBids() {

@@ -80,6 +80,18 @@ public class ClientPackage {
 		return false;
 		
 	}
+	
+	public void addHotel (int day,int type) {
+		switch(type) {
+		case 0 :
+			tampaTowers = false;
+			hotelDays[day-1] = true;
+
+		case 1 :
+			tampaTowers = true;
+			hotelDays[day-1] = true;
+		}
+	}
 
 
 	//GETTERS AND SETTERS

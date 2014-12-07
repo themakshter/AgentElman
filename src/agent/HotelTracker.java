@@ -31,7 +31,7 @@ public class HotelTracker extends Tracker {
 	public int subtract(int type, int day,int amount) {
 		if(type == 1){
 			return subtract(towers, day, amount);
-		}else if(type == 2){
+		}else if(type == 0){
 			return subtract(shanty, day, amount);
 		}
 		return 0;
