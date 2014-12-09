@@ -49,7 +49,7 @@ public class ClientPackage {
 	//Returns 0 if no hotels in package for at least in flight day.
 	public int calculateLastPossibleInFlightForCurrentHotels() {
 		
-		int index = outFlight-1;
+		int index = outFlight-2;
 		boolean hasHotel = hotelDays[index];
 		
 		while(hasHotel) {

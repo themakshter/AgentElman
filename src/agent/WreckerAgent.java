@@ -239,7 +239,7 @@ public class WreckerAgent extends AgentImpl {
 	}
 	break;
       case TACAgent.CAT_HOTEL:
-    	  alloc = 16;
+    	  alloc = 15;
 	if (alloc > 0) {
 	  price = 1000;
 	  prices[i] = 1000f;
