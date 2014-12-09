@@ -30,9 +30,9 @@ public class HotelTracker extends Tracker {
 	@Override
 	public int subtract(int type, int day,int amount) {
 		if(type == 1){
-			return subtract(towers, day, amount);
+			return subtract(towers, day-1, amount);
 		}else if(type == 0){
-			return subtract(shanty, day, amount);
+			return subtract(shanty, day-1, amount);
 		}
 		return 0;
 		
@@ -42,7 +42,7 @@ public class HotelTracker extends Tracker {
 	public int getAmount(int type, int day) {
 		if(type == 1){
 			return towers[day-1];
-		}else if(type == 2){
+		}else if(type == 0){
 			return shanty[day-1];
 		}
 		return 0;

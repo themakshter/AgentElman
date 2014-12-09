@@ -90,6 +90,10 @@ public class Client {
 	public void addHotelToPackage(int day, int type) {
 		clientPackage.addHotel(day, type);
 	}
+	
+	public void addFlightToPackage(int day,int type) {
+		clientPackage.addFlight(day,type);
+	}
 
 	
 	//GETTERS AND SETTERS

@@ -33,6 +33,8 @@ public class AgentElman extends AgentImpl {
 	private EntertainmentTracker haveEntertainment,wantEntertainment, unallocatedEntertainment;
 	private HotelTracker haveHotels,wantHotels, unallocatedHotels;
 	private FlightTracker haveFlights,wantFlights, unallocatedFlights;
+	
+	private boolean[] closedGood,closedCheap;
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
@@ -65,11 +67,14 @@ public class AgentElman extends AgentImpl {
 		
 
 		unallocatedEntertainment = new EntertainmentTracker();
+		unallocatedHotels = new HotelTracker();
 		
 		entertainVal = new int[13][8];
 		
 		lastAlloc = new int[28];
 
+		closedCheap = new boolean[4];
+		closedGood = new boolean[4];
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -155,7 +160,10 @@ public class AgentElman extends AgentImpl {
 				agent.submitBid(bid);
 			}
 		} else if (auctionCategory == TACAgent.CAT_FLIGHT) {
-			//System.out.println("Flights updated " + quote.getAskPrice());
+			//System.out.println("Flights updated " + quote.getBidPrice());
+			
+			//System.out.println(agent.getOwn(quote.getAuction()));
+			
 		}
 	}
 
@@ -171,6 +179,7 @@ public class AgentElman extends AgentImpl {
 				+ bid.getAuction() + " state="
 				+ bid.getProcessingStateAsString());
 		log.fine("       Hash: " + bid.getBidHash());
+		
 	}
 
 	public void bidRejected(Bid bid) {
@@ -201,6 +210,9 @@ public class AgentElman extends AgentImpl {
 			// flight
 			wantFlights.add(1,c.getInFlight());
 			wantFlights.add(2,c.getOutFlight());
+			
+			c.addFlightToPackage(c.getInFlight(), 0);
+			c.addFlightToPackage(c.getOutFlight(), 1);
 
 			// hotel
 			wantHotels.addDuration(1,c.getInFlight(), c.getOutFlight());
@@ -291,11 +303,25 @@ public class AgentElman extends AgentImpl {
 	public void gameStopped() {
 		log.fine("Game Stopped!");
 		System.out.println(haveHotels.toString());
+		System.out.println(unallocatedHotels.toString());
 		System.out.println();
+		for (Client c : clients) {
+			System.out.println(c.getClientPackage().toString());
+		}
+		System.out.println();	
+		for (boolean b : closedCheap) {
+			System.out.print(b + " ");
+		}
+		System.out.println();
+		for (boolean b : closedGood) {
+			System.out.print(b + " ");
+		}
 	}
 
 	public void auctionClosed(int auction) {
 		log.fine("*** Auction " + auction + " closed!");
+		
+		updateClosedHotelAuctions(auction);
 		
 		int type = agent.getAuctionType(auction);
 		int noOwned = agent.getOwn(auction);
@@ -322,7 +348,74 @@ public class AgentElman extends AgentImpl {
 				}				
 			}
 		}
+		System.out.println(checkAllHotelAuctionsClosed());
 		
+		if(checkAllHotelAuctionsClosed()) {
+			for(Client c: clients) {
+				ClientPackage clientPackage = c.getClientPackage();
+				if(!clientPackage.isFeasible()) {
+					int wantedOutFlight = clientPackage.calculateLastPossibleOutFlightForCurrentHotels();
+					int wantedInFlight = clientPackage.calculateLastPossibleInFlightForCurrentHotels();		
+					
+					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
+						bid.addBidPoint(1, 1000);
+						agent.submitBid(bid);
+					} else if (wantedInFlight != 0) {
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedInFlight));
+						bid.addBidPoint(1, 1000);
+						agent.submitBid(bid);
+					}
+				}	
+			}
+		}
+		
+		System.out.println();
+	}
+	
+	private void updateClosedHotelAuctions(int auction) {
+		switch(auction) {
+		case 8:
+			closedCheap[0] = true;
+			break;
+		case 9:
+			closedCheap[1] = true;
+			break;
+		case 10:
+			closedCheap[2] = true;
+			break;
+		case 11:
+			closedCheap[3] = true;
+			break;
+		case 12:
+			closedGood[0] = true;
+			break;
+		case 13:
+			closedGood[1] = true;
+			break;
+		case 14:
+			closedGood[2] = true;
+			break;
+		case 15:
+			closedGood[3] = true;
+			break;	
+		}
+	}
+	
+	private boolean checkAllHotelAuctionsClosed() {
+		
+		for (boolean b : closedCheap) {
+			if (!b) {
+				return false;
+			}
+		}
+		for (boolean b : closedGood) {
+			if (!b) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	private void sendBids() {

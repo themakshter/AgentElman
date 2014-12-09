@@ -26,6 +26,44 @@ public class ClientPackage {
 
 		return false;
 	}
+	
+	//Returns 0 if no hotels in package for at least in flight day.
+	public int calculateLastPossibleOutFlightForCurrentHotels() {
+		
+		int index = inFlight-1;
+		boolean hasHotel = hotelDays[index];
+		
+		while(hasHotel) {
+			index++;
+			hasHotel = hotelDays[index];
+		}
+		
+		if (index + 1 == inFlight) {
+			return 0;
+		}
+		else {
+			return index + 1; 
+		}
+	}
+	
+	//Returns 0 if no hotels in package for at least in flight day.
+	public int calculateLastPossibleInFlightForCurrentHotels() {
+		
+		int index = outFlight-1;
+		boolean hasHotel = hotelDays[index];
+		
+		while(hasHotel) {
+			index--;
+			hasHotel = hotelDays[index];
+		}
+		 
+		if (index + 1 == outFlight) {
+			return 0;
+		}
+		else {
+			return index + 1; 
+		}
+	}
 
 	public int calculateUtility() {
 		if(isFeasible()) {
@@ -92,6 +130,37 @@ public class ClientPackage {
 			hotelDays[day-1] = true;
 		}
 	}
+	
+	public void addFlight(int day, int type) {
+		switch(type) {
+		case 0 :
+			inFlight = day;
+
+		case 1 :
+			outFlight = day;
+		}
+		
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Client: " + owner.getIndex() + "\n");
+		sb.append("Inflight: " + inFlight + "\n");
+		sb.append("Outflight: " + outFlight + "\n");
+		
+		for(int i = 0; i<hotelDays.length;i++) {
+			sb.append(hotelDays[i] + " ");	
+		}
+		sb.append("\n");
+		sb.append("Tampa Towers: "+tampaTowers + "\n");
+		
+		for(int i = 0; i<entertainments.length;i++) {
+			sb.append(entertainments[i] + " ");
+		}
+		
+		return sb.toString();
+	}
 
 
 	//GETTERS AND SETTERS
@@ -150,6 +219,8 @@ public class ClientPackage {
 	public void setEntertainmentsAt(int day,int value) {
 		entertainments[day-1] = value;
 	}
+
+
 
 
 
