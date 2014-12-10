@@ -16,7 +16,7 @@ public class ClientPackage {
 
 		if(inFlight != null && outFlight != null) {
 
-			for(int i = inFlight;i<outFlight;i++) {
+			for(int i = inFlight;i<outFlight-1;i++) {
 				if(!hotelDays[i-1]) {
 					return false;
 				}
