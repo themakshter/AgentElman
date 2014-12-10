@@ -366,7 +366,9 @@ public class AgentElman extends AgentImpl {
 			for(Client c : clients) {
 				ClientPackage clientPackage = c.getClientPackage();
 				if (clientPackage.calculateStayDuration() == 1) {
-					
+					if(!clientPackage.getHotelDays()[day-1]) {
+						agent.getAuctionType(auction);
+					}
 				}
 			}
 		}
