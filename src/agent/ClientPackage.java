@@ -25,7 +25,7 @@ public class ClientPackage {
 	public boolean isFeasible() {
 
 		if(inFlight != null && outFlight != null) {
-			for(int i = inFlight;i<outFlight-1;i++) {
+			for(int i = inFlight;i<outFlight;i++) {
 				System.out.println("day " + (i) + " : "+hotelDays[i-1]);
 				if(!hotelDays[i-1]) {
 					return false;

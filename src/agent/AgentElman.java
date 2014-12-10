@@ -83,6 +83,7 @@ public class AgentElman extends AgentImpl {
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
 			int alloc = agent.getAllocation(auction);
 			float fear = 5.0f;
+			//if(alloc > 2){fear = fear + 10} //something like this - maybe 3,20?
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction))
 					&& quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
@@ -269,7 +270,7 @@ public class AgentElman extends AgentImpl {
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				lastMinuteUpdate();
+				System.out.println("Timer called");
 			}
 		};
 		updateTimer = new Timer(1 * 59 * 1000, taskPerformer);
