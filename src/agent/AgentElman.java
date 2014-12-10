@@ -118,7 +118,7 @@ public class AgentElman extends AgentImpl {
 					double time = ((double) agent.getGameTime())
 							/ (60.0 * 1000.0);
 					time = time * 0.4873;
-					long power = 120 - Math.round(Math.pow(time, 3));
+					long power = 130 - Math.round(Math.pow(time, 3));
 					if (power > 80) {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
@@ -362,11 +362,11 @@ public class AgentElman extends AgentImpl {
 					
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
-						bid.addBidPoint(1, 1000);
+						bid.addBidPoint(1, 400);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedInFlight));
-						bid.addBidPoint(1, 1000);
+						bid.addBidPoint(1, 400);
 						agent.submitBid(bid);
 					}
 				}	
@@ -479,8 +479,8 @@ public class AgentElman extends AgentImpl {
 	}
 
 	private void updateBids() { //may want to pass fear here if changed
-		float fear = 5.0f;
-		float safety = 4.0f;
+		float fear = 15.0f;
+		float safety = 10.0f;
 		for (int i = 8, n = 15; i < n; i++) {
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
