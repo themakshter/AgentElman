@@ -129,34 +129,35 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
-				}
-//					float tempMax = 0;
-//					int tempMaxIndex = 0;
-//					for(int a = 0; a<8; a++){
-//						//auction -16
-//						if(entertainVal[auction-16][a] > tempMax){
-//							tempMax = entertainVal[auction-16][a];
-//							tempMaxIndex = a;
-//						}						
-//					}
-//					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
-//					if(tempPrice < tempMax - 5){
-//						prices[auction] = tempPrice;
-//					}else{
-//						prices[auction] = Math.max(0, tempMax - 5);
-//					}
-						//if(lastAlloc[auction] < alloc){
-//							//TODO: fix this because we need to turn this zero only once we get ticket
-//							//entertainVal[auction - 16][tempMaxIndex] = 0; }
-						// lastAlloc[i] = alloc;
+					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
+				//}
+					float tempMax = 0;
+					int tempMaxIndex = 0;
+					for(int a = 0; a<8; a++){
+						//auction -16
+						if(entertainVal[auction-16][a] > tempMax){
+							tempMax = entertainVal[auction-16][a];
+							tempMaxIndex = a;
+						}						
+					}
+					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
+					if(tempPrice < tempMax - 5){
+						prices[auction] = tempPrice;
+					}else{
+						prices[auction] = Math.max(0, tempMax - 5);
+					}
+						if(lastAlloc[auction] > alloc){
+							//TODO: fix this because we need to turn this zero only once we get ticket
+							entertainVal[auction - 16][tempMaxIndex] = 0;
+						}
+					lastAlloc[auction] = alloc;
 //					
 //					//float tempPrice = (float) Math.cbrt((double) agent
 //					//		.getGameTime() * 100f);
 //					// if(tempPrice < ){
 //					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
 //					// }
-//				}
+				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -795,7 +796,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)
-			if (hotel > 90 && duration < 4) {
+			if (hotel > 80 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
