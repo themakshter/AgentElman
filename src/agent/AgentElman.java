@@ -468,15 +468,16 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		float tempValue = 0;
-		System.out.println(agent.getGameTime());
+		System.out.println("Time : " + agent.getGameTime());
 		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
+			System.out.println("Time in loop : " + agent.getGameTime());
 			for (int i = 8; i < 16; i++) {
 				tempValue += agent.getQuote(i).getAskPrice();
 			
 			}
 			tempValue /= 8;
 			openingPrice = (openingPrice + tempValue)/2;
-			System.out.println(openingPrice);
+			System.out.println("Opening price:" + openingPrice);
 		}
 	}
 	
