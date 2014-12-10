@@ -98,6 +98,9 @@ public class AgentElman extends AgentImpl {
 				System.out.println("Price : " + prices[auction]);
 				System.out.println("Ask price: " + quote.getAskPrice());
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				if(prices[auction] > 650){
+					prices[auction] = 650;
+				}
 				System.out.println("New Price : " + prices[auction]);
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
@@ -112,6 +115,9 @@ public class AgentElman extends AgentImpl {
 				// Can not own anything in hotel auctions...
 				updateBids();
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				if(prices[auction] > 650){
+					prices[auction] = 650;
+				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
