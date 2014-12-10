@@ -302,25 +302,6 @@ public class AgentElman extends AgentImpl {
 
 	public void gameStopped() {
 		log.fine("Game Stopped!");
-<<<<<<< HEAD
-=======
-		System.out.println(haveHotels.toString());
-		System.out.println(unallocatedHotels.toString());
-		System.out.println();
-		for (Client c : clients) {
-			System.out.println(c.getClientPackage().toString());
-		}
-		System.out.println();	
-		for (boolean b : closedCheap) {
-			System.out.print(b + " ");
-		}
-		System.out.println();
-		for (boolean b : closedGood) {
-			System.out.print(b + " ");
-		}
-		
-		updateTimer.stop();
->>>>>>> e2be34bed5e89d7d8f0c67bcb1f5ea66ccd58d7f
 	}
 
 	public void auctionClosed(int auction) {
@@ -336,7 +317,7 @@ public class AgentElman extends AgentImpl {
 		unallocatedHotels.addAmount(type, day, numOwned);
 		
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
-		
+		System.out.println("Type: " + type);
 		if (type == 1) {
 			
 			int noToAllocate = numOwned;
@@ -352,6 +333,30 @@ public class AgentElman extends AgentImpl {
 					noToAllocate--;
 				}				
 			}
+		} else if (type == 0) {
+			int noToAllocate = numOwned;
+			
+			for(int i = sortedHotelUtil.size()-1; i>=0;i--) {
+				if( noToAllocate <=0 ) {
+					break;
+				}
+				
+				Client c = sortedHotelUtil.get(i);
+				
+				if(c.validDay(day)) {
+					c.addHotelToPackage(day, type);
+					unallocatedHotels.subtract(type, day, 1);
+					noToAllocate--;
+				}	
+			}
+			
+		}
+		
+		for(Client c : clients) {
+			System.out.println(c.getClientPackage().toString());
+			System.out.println(c.getClientPackage().canCompletePackage(closedGood, closedCheap));
+			System.out.println();
+			
 		}
 		
 		if(checkAllHotelAuctionsClosed()) {
@@ -363,11 +368,11 @@ public class AgentElman extends AgentImpl {
 					
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
-						bid.addBidPoint(1, 400);
+						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedInFlight));
-						bid.addBidPoint(1, 400);
+						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					}
 				}	
