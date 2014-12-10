@@ -460,7 +460,7 @@ public class AgentElman extends AgentImpl {
 					int wantedInFlight = clientPackage.calculateLastPossibleInFlightForCurrentHotels();		
 					
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
-						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.ARRIVAL, wantedOutFlight));
 						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
