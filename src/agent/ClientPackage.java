@@ -7,11 +7,21 @@ public class ClientPackage {
 	private boolean[] hotelDays = new boolean[4];
 	private boolean tampaTowers;
 	private int[] entertainments = new int[4]; //0 - none; 1 - Alligator wrestling; 2 - Amusement; 3 - Museum
+	private float packageCost;
 
 	public ClientPackage (Client c) {
 		owner = c;
+		setPackageCost(0);
 	}
 
+	public void addToPackageCost(int price) {
+		packageCost += price;
+	}
+	
+	public void addToPackageCost(float price) {
+		packageCost += price;
+	}
+	
 	public boolean isFeasible() {
 
 		if(inFlight != null && outFlight != null) {
@@ -218,6 +228,14 @@ public class ClientPackage {
 	
 	public void setEntertainmentsAt(int day,int value) {
 		entertainments[day-1] = value;
+	}
+
+	public float getPackageCost() {
+		return packageCost;
+	}
+
+	public void setPackageCost(float packageCost) {
+		this.packageCost = packageCost;
 	}
 
 

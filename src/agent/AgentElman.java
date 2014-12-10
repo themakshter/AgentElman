@@ -302,20 +302,6 @@ public class AgentElman extends AgentImpl {
 
 	public void gameStopped() {
 		log.fine("Game Stopped!");
-		System.out.println(haveHotels.toString());
-		System.out.println(unallocatedHotels.toString());
-		System.out.println();
-		for (Client c : clients) {
-			System.out.println(c.getClientPackage().toString());
-		}
-		System.out.println();	
-		for (boolean b : closedCheap) {
-			System.out.print(b + " ");
-		}
-		System.out.println();
-		for (boolean b : closedGood) {
-			System.out.print(b + " ");
-		}
 	}
 
 	public void auctionClosed(int auction) {
@@ -348,7 +334,6 @@ public class AgentElman extends AgentImpl {
 				}				
 			}
 		}
-		System.out.println(checkAllHotelAuctionsClosed());
 		
 		if(checkAllHotelAuctionsClosed()) {
 			for(Client c: clients) {
@@ -369,8 +354,6 @@ public class AgentElman extends AgentImpl {
 				}	
 			}
 		}
-		
-		System.out.println();
 	}
 	
 	private void updateClosedHotelAuctions(int auction) {
