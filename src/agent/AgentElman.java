@@ -167,7 +167,7 @@ public class AgentElman extends AgentImpl {
 							+ agent.getAllocation(auction) + " own="
 							+ agent.getOwn(auction));
 				}
-				if(agent.getGameTime()<50 && agent.getGameTime > 100){
+				if(agent.getGameTime()<50 && agent.getGameTime() > 100){
 					//something like this
 				}
 				
