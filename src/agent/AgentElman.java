@@ -270,8 +270,7 @@ public class AgentElman extends AgentImpl {
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				System.out.println("Updating bids again");
-				updateBids();
+				lastMinuteUpdate();
 				sendBids();
 			}
 		};
@@ -327,17 +326,17 @@ public class AgentElman extends AgentImpl {
 		updateClosedHotelAuctions(auction);
 		
 		int type = agent.getAuctionType(auction);
-		int noOwned = agent.getOwn(auction);
+		int numOwned = agent.getOwn(auction);
 		int day = agent.getAuctionDay(auction);
 		
-		haveHotels.addAmount(type, day, noOwned);
-		unallocatedHotels.addAmount(type, day, noOwned);
+		haveHotels.addAmount(type, day, numOwned);
+		unallocatedHotels.addAmount(type, day, numOwned);
 		
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
 		
 		if (type == 1) {
 			
-			int noToAllocate = noOwned;
+			int noToAllocate = numOwned;
 			
 			for( Client c : sortedHotelUtil) {	
 				if( noToAllocate <=0 ) {
@@ -478,6 +477,18 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
+	public void lastMinuteUpdate(){
+		System.out.println("Last minute update");
+		for (int i = 8;i < 15;i++){
+			Bid bid = new Bid(i);
+			int alloc = agent.getAllocation(i);
+			prices[i]+= 15;
+			bid.addBidPoint(alloc, prices[i]);
+			agent.submitBid(bid);
+		}
+	}
+	
+	
 	private void updateBids() { //may want to pass fear here if changed
 		float fear = 15.0f;
 		float safety = 10.0f;
