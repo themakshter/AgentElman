@@ -92,7 +92,10 @@ public class AgentElman extends AgentImpl {
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
 				updateBids();
+				System.out.println("Price : " + prices[auction]);
+				System.out.println("Ask price: " + quote.getAskPrice());
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				System.out.println("New Price : " + prices[auction]);
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -291,9 +294,11 @@ public class AgentElman extends AgentImpl {
 		
 		for(int i = 0; i < 28; i++){
 			fear[i] = 5.0f;
-			//if(agent.getAllocation(i) > 2){fear[i] = fear[i] + 10} 
-			//if(agent.getAllocation(i) > 3){fear[i] = fear[i] + 20} 
-			//if(agent.getAllocation(i) > 4){fear[i] = fear[i] + 30}
+			if (agent.getAllocation(i) > 2) {
+				fear[i] += 10f;
+			}
+			//if(agent.getAllocation(i) > 3){fear[i] = fear[i] + 20;} 
+			//if(agent.getAllocation(i) > 4){fear[i] = fear[i] + 30;}
 		}
 		
 	}
@@ -457,8 +462,8 @@ public class AgentElman extends AgentImpl {
 				break;
 			case TACAgent.CAT_HOTEL:
 				if (alloc > 0) {
-					price = 201;
-					prices[i] = 201f;
+					price = 251;
+					prices[i] = 251f;
 				}//if alloc = 1 or if = 0? //if do additional in non 0 bids remember re-bid rules
 				else if(alloc == 0){
 					price = 20;
@@ -508,6 +513,7 @@ public class AgentElman extends AgentImpl {
 		//float fear = 15.0f;
 		float safety = 10.0f;
 		for (int i = 8, n = 15; i < n; i++) {
+			safety = fear[i];
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
@@ -777,7 +783,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)
-			if (hotel > 75 && duration < 4) {
+			if (hotel > 90 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
