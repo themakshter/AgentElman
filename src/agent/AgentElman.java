@@ -118,7 +118,7 @@ public class AgentElman extends AgentImpl {
 							+ agent.getAllocation(auction) + " own="
 							+ agent.getOwn(auction));
 				}
-			}
+			}		
 		} else if (auctionCategory == TACAgent.CAT_ENTERTAINMENT) {
 			int alloc = agent.getAllocation(auction) - agent.getOwn(auction);
 			if (alloc != 0) {
@@ -193,6 +193,10 @@ public class AgentElman extends AgentImpl {
 				+ bid.getAuction() + " state="
 				+ bid.getProcessingStateAsString());
 		log.fine("       Hash: " + bid.getBidHash());
+		
+		if(bid.getAuction()>7 && bid.getAuction() < 16) {
+			System.out.println("Bid Price " + bid.getAuction());
+		}
 		
 	}
 
@@ -270,13 +274,13 @@ public class AgentElman extends AgentImpl {
 		
 		allocateStartingEnt();
 
-		for(Client c: clients) {
+		/*for(Client c: clients) {
 			System.out.println("Entertainments: " + c.getClientPackage().getEntertainments()[0]+","
 					+ c.getClientPackage().getEntertainments()[1]+","
 					+ c.getClientPackage().getEntertainments()[2]+","
 					+ c.getClientPackage().getEntertainments()[3]+
 					" Index: " + c.getIndex());
-		}
+		}*/
 
 
 		calculateAllocation();
@@ -439,12 +443,12 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		
-		for(Client c : clients) {
+	/*	for(Client c : clients) {
 			System.out.println(c.getClientPackage().toString());
 			System.out.println(c.getClientPackage().canCompletePackage(closedGood, closedCheap));
 			System.out.println();
 			
-		}
+		}*/
 		
 		if(checkAllHotelAuctionsClosed()) {
 			for(Client c: clients) {
@@ -468,7 +472,7 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		float tempValue = 0;
-		System.out.println("Time : " + agent.getGameTime());
+	//	System.out.println("Time : " + agent.getGameTime());
 		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
 			System.out.println("Time in loop : " + agent.getGameTime());
 			for (int i = 8; i < 16; i++) {
