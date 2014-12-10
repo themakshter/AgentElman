@@ -92,7 +92,10 @@ public class AgentElman extends AgentImpl {
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
 				updateBids();
+				System.out.println("Price : " + prices[auction]);
+				System.out.println("Ask price: " + quote.getAskPrice());
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				System.out.println("New Price : " + prices[auction]);
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -126,34 +129,35 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
-				}
-//					float tempMax = 0;
-//					int tempMaxIndex = 0;
-//					for(int a = 0; a<8; a++){
-//						//auction -16
-//						if(entertainVal[auction-16][a] > tempMax){
-//							tempMax = entertainVal[auction-16][a];
-//							tempMaxIndex = a;
-//						}						
-//					}
-//					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
-//					if(tempPrice < tempMax - 5){
-//						prices[auction] = tempPrice;
-//					}else{
-//						prices[auction] = Math.max(0, tempMax - 5);
-//					}
-						//if(lastAlloc[auction] < alloc){
-//							//TODO: fix this because we need to turn this zero only once we get ticket
-//							//entertainVal[auction - 16][tempMaxIndex] = 0; }
-						// lastAlloc[i] = alloc;
+					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
+				//}
+					float tempMax = 0;
+					int tempMaxIndex = 0;
+					for(int a = 0; a<8; a++){
+						//auction -16
+						if(entertainVal[auction-16][a] > tempMax){
+							tempMax = entertainVal[auction-16][a];
+							tempMaxIndex = a;
+						}						
+					}
+					float tempPrice = (float) Math.cbrt( Math.pow(tempMax, 3) * agent.getGameTime() / 420000);
+					if(tempPrice < tempMax - 5){
+						prices[auction] = tempPrice;
+					}else{
+						prices[auction] = Math.max(0, tempMax - 5);
+					}
+						if(lastAlloc[auction] > alloc){
+							//TODO: fix this because we need to turn this zero only once we get ticket
+							entertainVal[auction - 16][tempMaxIndex] = 0;
+						}
+					lastAlloc[auction] = alloc;
 //					
 //					//float tempPrice = (float) Math.cbrt((double) agent
 //					//		.getGameTime() * 100f);
 //					// if(tempPrice < ){
 //					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
 //					// }
-//				}
+				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -293,11 +297,23 @@ public class AgentElman extends AgentImpl {
 		}
 		
 		
-		for(int i = 0; i < 28; i++){
+		for (int i = 0; i < 28; i++) {
 			fear[i] = 5.0f;
-			//if(agent.getAllocation(i) > 2){fear[i] = fear[i] + 10} 
-			//if(agent.getAllocation(i) > 3){fear[i] = fear[i] + 20} 
-			//if(agent.getAllocation(i) > 4){fear[i] = fear[i] + 30}
+			if (agent.getAllocation(i) > 2) {
+				fear[i] += 10f;
+			}
+			if (agent.getAllocation(i) > 3) {
+				fear[i] +=10f;
+			}
+			if (agent.getAllocation(i) > 4) {
+				fear[i]+= 15f;
+			}
+			if(agent.getAllocation(i) > 5){
+				fear[i] += 15f;
+			}
+			if(agent.getAllocation(i) > 6){
+				fear[i] += 10f;
+			}
 		}
 		
 	}
@@ -332,7 +348,6 @@ public class AgentElman extends AgentImpl {
 		unallocatedHotels.addAmount(type, day, numOwned);
 		
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
-		System.out.println("Type: " + type);
 		if (type == 1) {
 			
 			int noToAllocate = numOwned;
@@ -366,6 +381,18 @@ public class AgentElman extends AgentImpl {
 			}
 			
 		}
+		
+		if (type == 1) {
+			for(Client c : clients) {
+				ClientPackage clientPackage = c.getClientPackage();
+				if (clientPackage.calculateStayDuration() == 1) {
+					if(!clientPackage.getHotelDays()[day-1]) {
+						agent.getAuctionType(auction);
+					}
+				}
+			}
+		}
+		
 		
 		for(Client c : clients) {
 			System.out.println(c.getClientPackage().toString());
@@ -452,8 +479,8 @@ public class AgentElman extends AgentImpl {
 				break;
 			case TACAgent.CAT_HOTEL:
 				if (alloc > 0) {
-					price = 201;
-					prices[i] = 201f;
+					price = 251;
+					prices[i] = 251f;
 				}//if alloc = 1 or if = 0? //if do additional in non 0 bids remember re-bid rules
 				else if(alloc == 0){
 					price = 20;
@@ -503,6 +530,7 @@ public class AgentElman extends AgentImpl {
 		//float fear = 15.0f;
 		float safety = 10.0f;
 		for (int i = 8, n = 15; i < n; i++) {
+			safety = fear[i];
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
@@ -772,7 +800,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)
-			if (hotel > 75 && duration < 4) {
+			if (hotel > 80 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
