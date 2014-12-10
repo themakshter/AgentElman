@@ -394,42 +394,42 @@ public class AgentElman extends AgentImpl {
 					switch(auction) {
 					case 8:
 						if(!agent.getQuote(12).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(12, agent.getAllocation(12) + 1);
 						}
 						break;
 					case 9:
 						if(!agent.getQuote(13).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(13, agent.getAllocation(14) + 1);
 						}
 						break;
 					case 10:
 						if(!agent.getQuote(14).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(14, agent.getAllocation(14) + 1);
 						}
 						break;
 					case 11:
 						if(!agent.getQuote(15).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(15, agent.getAllocation(15) + 1);
 						}
 						break;
 					case 12:
 						if(!agent.getQuote(8).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(8, agent.getAllocation(8) + 1);
 						}
 						break;
 					case 13:
 						if(!agent.getQuote(9).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(9, agent.getAllocation(9) + 1);
 						}
 						break;
 					case 14:
 						if(!agent.getQuote(10).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(10, agent.getAllocation(10) + 1);
 						}
 						break;
 					case 15:
 						if(!agent.getQuote(11).isAuctionClosed()) {
-							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+							agent.setAllocation(11, agent.getAllocation(11) + 1);
 						}
 						break;	
 					}
