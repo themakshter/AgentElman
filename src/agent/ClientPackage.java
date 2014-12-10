@@ -25,16 +25,16 @@ public class ClientPackage {
 	public boolean isFeasible() {
 
 		if(inFlight != null && outFlight != null) {
-
-			for(int i = inFlight;i<outFlight;i++) {
+			for(int i = inFlight;i<outFlight-2;i++) {
+				System.out.println("day " + (i) + " : "+hotelDays[i-1]);
 				if(!hotelDays[i-1]) {
 					return false;
 				}
 			}
 			return true;
-		} 
-
-		return false;
+		}else{ 
+			return false;
+		}
 	}
 	
 	//Returns 0 if no hotels in package for at least in flight day.

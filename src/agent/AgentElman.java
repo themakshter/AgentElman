@@ -118,7 +118,7 @@ public class AgentElman extends AgentImpl {
 					double time = ((double) agent.getGameTime())
 							/ (60.0 * 1000.0);
 					time = time * 0.4873;
-					long power = 120 - Math.round(Math.pow(time, 3));
+					long power = 130 - Math.round(Math.pow(time, 3));
 					if (power > 80) {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
@@ -268,19 +268,19 @@ public class AgentElman extends AgentImpl {
 		calculateAllocation();
 		sendBids();
 
-		/*
-
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				updateAllocation();
+				lastMinuteUpdate();
+				sendBids();
 			}
 		};
-		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
+		updateTimer = new Timer(1 * 59 * 1000, taskPerformer);
 		updateTimer.start();
+		
 		calculateUtilities();	
 		calculateRisk();	
 		calculateUtilOverRisk();
-		*/
+		
 		
 		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
 			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
@@ -302,6 +302,25 @@ public class AgentElman extends AgentImpl {
 
 	public void gameStopped() {
 		log.fine("Game Stopped!");
+<<<<<<< HEAD
+=======
+		System.out.println(haveHotels.toString());
+		System.out.println(unallocatedHotels.toString());
+		System.out.println();
+		for (Client c : clients) {
+			System.out.println(c.getClientPackage().toString());
+		}
+		System.out.println();	
+		for (boolean b : closedCheap) {
+			System.out.print(b + " ");
+		}
+		System.out.println();
+		for (boolean b : closedGood) {
+			System.out.print(b + " ");
+		}
+		
+		updateTimer.stop();
+>>>>>>> e2be34bed5e89d7d8f0c67bcb1f5ea66ccd58d7f
 	}
 
 	public void auctionClosed(int auction) {
@@ -310,17 +329,17 @@ public class AgentElman extends AgentImpl {
 		updateClosedHotelAuctions(auction);
 		
 		int type = agent.getAuctionType(auction);
-		int noOwned = agent.getOwn(auction);
+		int numOwned = agent.getOwn(auction);
 		int day = agent.getAuctionDay(auction);
 		
-		haveHotels.addAmount(type, day, noOwned);
-		unallocatedHotels.addAmount(type, day, noOwned);
+		haveHotels.addAmount(type, day, numOwned);
+		unallocatedHotels.addAmount(type, day, numOwned);
 		
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
 		
 		if (type == 1) {
 			
-			int noToAllocate = noOwned;
+			int noToAllocate = numOwned;
 			
 			for( Client c : sortedHotelUtil) {	
 				if( noToAllocate <=0 ) {
@@ -344,11 +363,11 @@ public class AgentElman extends AgentImpl {
 					
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
-						bid.addBidPoint(1, 1000);
+						bid.addBidPoint(1, 400);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedInFlight));
-						bid.addBidPoint(1, 1000);
+						bid.addBidPoint(1, 400);
 						agent.submitBid(bid);
 					}
 				}	
@@ -427,6 +446,7 @@ public class AgentElman extends AgentImpl {
 								+ agent.getOwn(i));
 					}
 					agent.submitBid(bid);
+					System.out.println();
 					price = 0;
 					prices[i] = 0;
 				}
@@ -459,9 +479,21 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
+	public void lastMinuteUpdate(){
+		System.out.println("Last minute update");
+		for (int i = 8;i < 15;i++){
+			Bid bid = new Bid(i);
+			int alloc = agent.getAllocation(i);
+			prices[i]+= 15;
+			bid.addBidPoint(alloc, prices[i]);
+			agent.submitBid(bid);
+		}
+	}
+	
+	
 	private void updateBids() { //may want to pass fear here if changed
-		float fear = 5.0f;
-		float safety = 4.0f;
+		float fear = 15.0f;
+		float safety = 10.0f;
 		for (int i = 8, n = 15; i < n; i++) {
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
