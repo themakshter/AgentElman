@@ -160,6 +160,10 @@ public class AgentElman extends AgentImpl {
 							+ agent.getAllocation(auction) + " own="
 							+ agent.getOwn(auction));
 				}
+				if(agent.getGameTime()<50 && agent.getGameTime > 100){
+					//something like this
+				}
+				
 				agent.submitBid(bid);
 			}
 		} else if (auctionCategory == TACAgent.CAT_FLIGHT) {
