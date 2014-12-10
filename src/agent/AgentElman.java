@@ -341,6 +341,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStopped() {
+		updateTimer.stop();
 		log.fine("Game Stopped!");
 	}
 

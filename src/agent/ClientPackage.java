@@ -23,7 +23,7 @@ public class ClientPackage {
 	}
 	
 	public boolean isFeasible() {
-
+		System.out.println("Client index : " + owner.getIndex());
 		if(inFlight != null && outFlight != null) {
 			for(int i = inFlight;i<outFlight;i++) {
 				System.out.println("day " + (i) + " : "+hotelDays[i-1]);
