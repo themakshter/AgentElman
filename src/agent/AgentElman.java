@@ -98,6 +98,9 @@ public class AgentElman extends AgentImpl {
 				System.out.println("Price : " + prices[auction]);
 				System.out.println("Ask price: " + quote.getAskPrice());
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				if(prices[auction] > 650){
+					prices[auction] = 650;
+				}
 				System.out.println("New Price : " + prices[auction]);
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
@@ -112,6 +115,9 @@ public class AgentElman extends AgentImpl {
 				// Can not own anything in hotel auctions...
 				updateBids();
 				prices[auction] = quote.getAskPrice() + diff[auction];
+				if(prices[auction] > 650){
+					prices[auction] = 650;
+				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -458,7 +464,7 @@ public class AgentElman extends AgentImpl {
 					int wantedInFlight = clientPackage.calculateLastPossibleInFlightForCurrentHotels();		
 					
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
-						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedOutFlight));
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.ARRIVAL, wantedOutFlight));
 						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
@@ -475,11 +481,15 @@ public class AgentElman extends AgentImpl {
 	//	System.out.println("Time : " + agent.getGameTime());
 		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
 			System.out.println("Time in loop : " + agent.getGameTime());
+			int count = 0;
 			for (int i = 8; i < 16; i++) {
+				if(agent.getQuote(i).getAskPrice() != 0){
+					count++;
+				}
 				tempValue += agent.getQuote(i).getAskPrice();
-			
+				
 			}
-			tempValue /= 8;
+			tempValue /= count;
 			openingPrice = (openingPrice + tempValue)/2;
 			System.out.println("Opening price:" + openingPrice);
 		}
@@ -863,7 +873,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)		
-			if (hotel > openingPrice && duration < 4) {
+			if (hotel > openingPrice+10 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
