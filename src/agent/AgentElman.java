@@ -471,11 +471,15 @@ public class AgentElman extends AgentImpl {
 		System.out.println("Time : " + agent.getGameTime());
 		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
 			System.out.println("Time in loop : " + agent.getGameTime());
+			int count = 0;
 			for (int i = 8; i < 16; i++) {
+				if(agent.getQuote(i).getAskPrice() != 0){
+					count++;
+				}
 				tempValue += agent.getQuote(i).getAskPrice();
-			
+				
 			}
-			tempValue /= 8;
+			tempValue /= count;
 			openingPrice = (openingPrice + tempValue)/2;
 			System.out.println("Opening price:" + openingPrice);
 		}
@@ -859,7 +863,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)		
-			if (hotel > openingPrice && duration < 4) {
+			if (hotel > openingPrice+15 && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
