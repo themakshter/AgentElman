@@ -268,19 +268,20 @@ public class AgentElman extends AgentImpl {
 		calculateAllocation();
 		sendBids();
 
-		/*
-
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				updateAllocation();
+				System.out.println("Updating bids again");
+				updateBids();
+				sendBids();
 			}
 		};
-		updateTimer = new Timer(1 * 60 * 1000, taskPerformer);
+		updateTimer = new Timer(1 * 59 * 1000, taskPerformer);
 		updateTimer.start();
+		
 		calculateUtilities();	
 		calculateRisk();	
 		calculateUtilOverRisk();
-		*/
+		
 		
 		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
 			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
@@ -316,6 +317,8 @@ public class AgentElman extends AgentImpl {
 		for (boolean b : closedGood) {
 			System.out.print(b + " ");
 		}
+		
+		updateTimer.stop();
 	}
 
 	public void auctionClosed(int auction) {
@@ -369,8 +372,6 @@ public class AgentElman extends AgentImpl {
 				}	
 			}
 		}
-		
-		System.out.println();
 	}
 	
 	private void updateClosedHotelAuctions(int auction) {
@@ -444,6 +445,7 @@ public class AgentElman extends AgentImpl {
 								+ agent.getOwn(i));
 					}
 					agent.submitBid(bid);
+					System.out.println();
 					price = 0;
 					prices[i] = 0;
 				}
