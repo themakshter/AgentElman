@@ -45,6 +45,8 @@ public class AgentElman extends AgentImpl {
 	private int[][] entertainVal;
 	
 	private int[] lastAlloc;
+	
+	private float [] fear;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -72,6 +74,7 @@ public class AgentElman extends AgentImpl {
 		entertainVal = new int[13][8];
 		
 		lastAlloc = new int[28];
+		fear = new float[28];
 
 		closedCheap = new boolean[4];
 		closedGood = new boolean[4];
@@ -82,7 +85,7 @@ public class AgentElman extends AgentImpl {
 		int auctionCategory = agent.getAuctionCategory(auction);
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
 			int alloc = agent.getAllocation(auction);
-			float fear = 5.0f;
+			//float fear[auction] = 5.0f;
 			//if(alloc > 2){fear = fear + 10} //something like this - maybe 3,20?
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction))
 					&& quote.getHQW() < alloc) {
@@ -97,7 +100,7 @@ public class AgentElman extends AgentImpl {
 							+ agent.getOwn(auction));
 				}
 				agent.submitBid(bid);
-			} else if (quote.getAskPrice() + fear > lastBidPrice[auction]
+			} else if (quote.getAskPrice() + fear[auction] > lastBidPrice[auction]
 					&& lastAskPrice[auction] != 0) {// change here?
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
@@ -270,8 +273,7 @@ public class AgentElman extends AgentImpl {
 
 		ActionListener taskPerformer = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				lastMinuteUpdate();
-				sendBids();
+				System.out.println("Timer called");
 			}
 		};
 		updateTimer = new Timer(1 * 59 * 1000, taskPerformer);
@@ -285,6 +287,15 @@ public class AgentElman extends AgentImpl {
 		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
 			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
 		}
+		
+		
+		for(int i = 0; i < 28; i++){
+			fear[i] = 5.0f;
+			//if(agent.getAllocation(i) > 2){fear[i] = fear[i] + 10} 
+			//if(agent.getAllocation(i) > 3){fear[i] = fear[i] + 20} 
+			//if(agent.getAllocation(i) > 4){fear[i] = fear[i] + 30}
+		}
+		
 	}
 
 	public void updateTrackers(){
@@ -492,30 +503,18 @@ public class AgentElman extends AgentImpl {
 			}
 		}
 	}
-
-	public void lastMinuteUpdate(){
-		System.out.println("Last minute update");
-		for (int i = 8;i < 15;i++){
-			Bid bid = new Bid(i);
-			int alloc = agent.getAllocation(i);
-			prices[i]+= 15;
-			bid.addBidPoint(alloc, prices[i]);
-			agent.submitBid(bid);
-		}
-	}
-	
 	
 	private void updateBids() { //may want to pass fear here if changed
-		float fear = 15.0f;
+		//float fear = 15.0f;
 		float safety = 10.0f;
 		for (int i = 8, n = 15; i < n; i++) {
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
-			} else if (quote.getAskPrice() + fear > lastBidPrice[i]
+			} else if (quote.getAskPrice() + fear[i] > lastBidPrice[i]
 					&& lastAskPrice[i] != 0) {
-				diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second order change? [want + fear??]
-				//diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety; //doing this way would rebid for top?
+				//diff[i] = (lastAskPrice[i] - lastAskPrice2[i]) + safety; // second order change? [want + fear??]
+				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety; //doing this way would rebid for top?
 			} else if (lastAskPrice[i] == 0) {
 				diff[i] = 50f;
 			}
