@@ -25,7 +25,7 @@ public class ClientPackage {
 	public boolean isFeasible() {
 
 		if(inFlight != null && outFlight != null) {
-			for(int i = inFlight;i<outFlight-2;i++) {
+			for(int i = inFlight;i<outFlight;i++) {
 				System.out.println("day " + (i) + " : "+hotelDays[i-1]);
 				if(!hotelDays[i-1]) {
 					return false;
@@ -40,7 +40,7 @@ public class ClientPackage {
 	public boolean canCompletePackage(boolean[] closedGoodAuctions,boolean[] closedCheapAuctions) {
 		
 		if(inFlight != null && outFlight != null) {
-			for(int i = inFlight;i<outFlight-2;i++) {
+			for(int i = inFlight;i<outFlight;i++) {
 				if(!hotelDays[i-1]) {
 					if(tampaTowers) {
 						if(closedGoodAuctions[i-1]) {
@@ -172,6 +172,10 @@ public class ClientPackage {
 			outFlight = day;
 		}
 		
+	}
+	
+	public int calculateStayDuration() {
+		return outFlight - inFlight;
 	}
 	
 	public String toString() {

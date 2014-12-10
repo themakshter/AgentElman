@@ -317,7 +317,6 @@ public class AgentElman extends AgentImpl {
 		unallocatedHotels.addAmount(type, day, numOwned);
 		
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
-		System.out.println("Type: " + type);
 		if (type == 1) {
 			
 			int noToAllocate = numOwned;
@@ -351,6 +350,16 @@ public class AgentElman extends AgentImpl {
 			}
 			
 		}
+		
+		if (type == 1) {
+			for(Client c : clients) {
+				ClientPackage clientPackage = c.getClientPackage();
+				if (clientPackage.calculateStayDuration() == 1) {
+					
+				}
+			}
+		}
+		
 		
 		for(Client c : clients) {
 			System.out.println(c.getClientPackage().toString());
