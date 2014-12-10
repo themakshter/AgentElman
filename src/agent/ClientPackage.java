@@ -59,7 +59,7 @@ public class ClientPackage {
 	}
 	
 	//Returns 0 if no hotels in package for at least in flight day.
-	public int calculateLastPossibleOutFlightForCurrentHotels() {
+	public int calculateLastPossibleInFlightForCurrentHotels() {
 		
 		int index = inFlight-1;
 		boolean hasHotel = hotelDays[index];
@@ -78,7 +78,7 @@ public class ClientPackage {
 	}
 	
 	//Returns 0 if no hotels in package for at least in flight day.
-	public int calculateLastPossibleInFlightForCurrentHotels() {
+	public int calculateLastPossibleOutFlightForCurrentHotels() {
 		
 		int index = outFlight-2;
 		boolean hasHotel = hotelDays[index];
