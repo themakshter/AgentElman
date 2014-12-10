@@ -47,7 +47,7 @@ public class AgentElman extends AgentImpl {
 	private int[] lastAlloc;
 	
 	private float [] fear;
-	private float godBad;
+	private float openingPrice;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -80,7 +80,7 @@ public class AgentElman extends AgentImpl {
 		closedCheap = new boolean[4];
 		closedGood = new boolean[4];
 		
-		godBad = 90.0f;
+		openingPrice = 90.0f;
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -467,11 +467,17 @@ public class AgentElman extends AgentImpl {
 			
 		}
 		
-		for(int i = 8; i <16; i++){
-			//private float godBad;
-			//gotta put the average together
+		float tempValue = 0;
+		System.out.println(agent.getGameTime());
+		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
+			for (int i = 8; i < 16; i++) {
+				tempValue += agent.getQuote(i).getAskPrice();
+			
+			}
+			tempValue /= 8;
+			openingPrice = (openingPrice + tempValue)/2;
+			System.out.println(openingPrice);
 		}
-		
 	}
 	
 	private void updateClosedHotelAuctions(int auction) {
@@ -852,7 +858,7 @@ public class AgentElman extends AgentImpl {
 
 			// if the hotel value is greater than 70 we will select the
 			// expensive hotel (type = 1)		
-			if (hotel > godBad && duration < 4) {
+			if (hotel > openingPrice && duration < 4) {
 				type = TACAgent.TYPE_GOOD_HOTEL;
 			} else {
 				type = TACAgent.TYPE_CHEAP_HOTEL;
