@@ -7,11 +7,21 @@ public class ClientPackage {
 	private boolean[] hotelDays = new boolean[4];
 	private boolean tampaTowers;
 	private int[] entertainments = new int[4]; //0 - none; 1 - Alligator wrestling; 2 - Amusement; 3 - Museum
+	private float packageCost;
 
 	public ClientPackage (Client c) {
 		owner = c;
+		setPackageCost(0);
 	}
 
+	public void addToPackageCost(int price) {
+		packageCost += price;
+	}
+	
+	public void addToPackageCost(float price) {
+		packageCost += price;
+	}
+	
 	public boolean isFeasible() {
 
 		if(inFlight != null && outFlight != null) {
@@ -25,6 +35,27 @@ public class ClientPackage {
 		}else{ 
 			return false;
 		}
+	}
+	
+	public boolean canCompletePackage(boolean[] closedGoodAuctions,boolean[] closedCheapAuctions) {
+		
+		if(inFlight != null && outFlight != null) {
+			for(int i = inFlight;i<outFlight-2;i++) {
+				if(!hotelDays[i-1]) {
+					if(tampaTowers) {
+						if(closedGoodAuctions[i-1]) {
+							return false;
+						}
+					} else {
+						if(closedCheapAuctions[i-1]) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	//Returns 0 if no hotels in package for at least in flight day.
@@ -124,10 +155,11 @@ public class ClientPackage {
 		case 0 :
 			tampaTowers = false;
 			hotelDays[day-1] = true;
-
+			break;
 		case 1 :
 			tampaTowers = true;
 			hotelDays[day-1] = true;
+			break;
 		}
 	}
 	
@@ -218,6 +250,14 @@ public class ClientPackage {
 	
 	public void setEntertainmentsAt(int day,int value) {
 		entertainments[day-1] = value;
+	}
+
+	public float getPackageCost() {
+		return packageCost;
+	}
+
+	public void setPackageCost(float packageCost) {
+		this.packageCost = packageCost;
 	}
 
 
