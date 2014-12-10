@@ -385,15 +385,57 @@ public class AgentElman extends AgentImpl {
 			
 		}
 		
-		if (type == 1) {
-			for(Client c : clients) {
-				ClientPackage clientPackage = c.getClientPackage();
-				if (clientPackage.calculateStayDuration() == 1) {
-					if(!clientPackage.getHotelDays()[day-1]) {
-						agent.getAuctionType(auction);
+		
+		for(Client c : clients) {
+			ClientPackage clientPackage = c.getClientPackage();		
+			if (clientPackage.calculateStayDuration() == 1 && clientPackage.validDay(day)) {
+				if(!clientPackage.getHotelDays()[day-1]) {
+					System.out.println("Changed hotel type");
+					switch(auction) {
+					case 8:
+						if(!agent.getQuote(12).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 9:
+						if(!agent.getQuote(13).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 10:
+						if(!agent.getQuote(14).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 11:
+						if(!agent.getQuote(15).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 12:
+						if(!agent.getQuote(8).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 13:
+						if(!agent.getQuote(9).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 14:
+						if(!agent.getQuote(10).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;
+					case 15:
+						if(!agent.getQuote(11).isAuctionClosed()) {
+							agent.setAllocation(auction, agent.getAllocation(auction) + 1);
+						}
+						break;	
 					}
 				}
 			}
+
 		}
 		
 		
