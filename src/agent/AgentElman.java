@@ -17,7 +17,7 @@ public class AgentElman extends AgentImpl {
 	private static final boolean DEBUG = false;
 
 	private float[] prices, diff, lastAskPrice, lastAskPrice2, lastBidPrice,
-	lastBidPrice2;
+	lastBidPrice2, lastFlightPrice, initialFlightPrice;
 
 	private EntertainmentTracker unallocatedEntertainment;
 	private HotelTracker unallocatedHotels;
@@ -35,6 +35,9 @@ public class AgentElman extends AgentImpl {
 
 	private float [] fear;
 	private float openingPrice;
+
+	private int noOfFlightPerturbations;
+
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[28];
@@ -61,6 +64,9 @@ public class AgentElman extends AgentImpl {
 		clients = new ArrayList<Client>();
 		entertainVal = new int[13][8];
 
+		lastFlightPrice = new float[8];
+		initialFlightPrice = new float[8];
+		noOfFlightPerturbations = 0;
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -145,7 +151,7 @@ public class AgentElman extends AgentImpl {
 			}
 		} else if (auctionCategory == TACAgent.CAT_FLIGHT) {
 
-			bidOnFlights(auction);
+			bidOnFlights(auction,quote);
 
 		}
 	}
@@ -210,14 +216,17 @@ public class AgentElman extends AgentImpl {
 		initLastAlloc();
 		initFear();
 
+		for (int i = 0;i<8;i++) {
+			initialFlightPrice[i] = agent.getQuote(i).getAskPrice();
+		}
 	}
-	
+
 	public void initLastAlloc() {
 		for (int i = 0, n = TACAgent.getAuctionNo(); i < n; i++) {
 			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
 		}
 	}
-	
+
 	public void initFear() {
 		for (int i = 0; i < 28; i++) {
 			fear[i] = 5.0f;
@@ -426,9 +435,41 @@ public class AgentElman extends AgentImpl {
 		return true;
 	}
 
-	private void bidOnFlights(int auction) {
+	private void bidOnFlights(int auction, Quote quote) {
 
-		if(agent.getGameTime() > 4.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
+		noOfFlightPerturbations++;
+
+		if(lastFlightPrice[auction] == 0) {
+			lastFlightPrice[auction] = quote.getAskPrice();
+		}
+
+		if(quote.getAskPrice() - lastFlightPrice[auction] >= 10 && agent.getAllocation(auction) > agent.getOwn(auction)) {
+			Bid bid = new Bid(auction);
+			bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
+			if (DEBUG) {
+				log.finest("submitting bid with alloc="
+						+ agent.getAllocation(auction) + " own="
+						+ agent.getOwn(auction));
+			}
+			agent.submitBid(bid);
+		} else if(noOfFlightPerturbations >= 20 && agent.getAllocation(auction) > agent.getOwn(auction)) {
+			if(quote.getAskPrice() - initialFlightPrice[auction] > 0) {
+				Bid bid = new Bid(auction);
+				bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
+				if (DEBUG) {
+					log.finest("submitting bid with alloc="
+							+ agent.getAllocation(auction) + " own="
+							+ agent.getOwn(auction));
+				}
+				agent.submitBid(bid);
+			}
+		}
+		
+		lastFlightPrice[auction] = quote.getAskPrice();
+
+
+
+		if(agent.getGameTime() > 5.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
 			Bid bid = new Bid(auction);
 			bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
 			if (DEBUG) {

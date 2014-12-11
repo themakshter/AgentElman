@@ -47,14 +47,9 @@ public class Client {
 
 		maxUtility = 1000 - travelPenalty + hotel + funBonus;
 
-		System.out.println("Stay duration : " + inFlight + " to " + outFlight
-				+ "\nHotel Bonus : " + hotel + "\nFun Bonus : " + funBonus
-				+ "\nMax util : " + maxUtility);
-
 	}
 
 	public void calculateRisk() {
-		int stayDuration = outFlight - inFlight;
 		risk = 0;
 
 		for (int j = inFlight; j < outFlight; j++) {
@@ -75,7 +70,6 @@ public class Client {
 				break;
 			}
 		}
-		System.out.println("Risk value : " + risk);
 	}
 	
 	public boolean validDay(int day) {
