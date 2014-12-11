@@ -309,18 +309,15 @@ public class AgentElman extends AgentImpl {
 		for (int i = 0; i < 28; i++) {
 			fear[i] = 5.0f;
 			if (agent.getAllocation(i) > 2) {
-				fear[i] += 10f;
+				fear[i] += 20f;
 			}
 			if (agent.getAllocation(i) > 3) {
-				fear[i] +=10f;
+				fear[i] +=15f;
 			}
 			if (agent.getAllocation(i) > 4) {
-				fear[i]+= 15f;
+				fear[i]+= 10f;
 			}
 			if(agent.getAllocation(i) > 5){
-				fear[i] += 15f;
-			}
-			if(agent.getAllocation(i) > 6){
 				fear[i] += 10f;
 			}
 		}
