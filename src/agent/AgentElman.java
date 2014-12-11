@@ -215,10 +215,6 @@ public class AgentElman extends AgentImpl {
 
 		initLastAlloc();
 		initFear();
-
-		for (int i = 0;i<8;i++) {
-			initialFlightPrice[i] = agent.getQuote(i).getAskPrice();
-		}
 	}
 
 	public void initLastAlloc() {
@@ -298,12 +294,12 @@ public class AgentElman extends AgentImpl {
 
 		}
 
-
+/*
 		for(Client c : clients) {
 			ClientPackage clientPackage = c.getClientPackage();		
 			if (clientPackage.calculateStayDuration() == 1 && clientPackage.validDay(day)) {
 				if(!clientPackage.getHotelDays()[day-1]) {
-					System.out.println("Changed hotel type");
+					System.out.println(auction + "closed, Changed hotel type");
 					switch(auction) {
 					case 8:
 						if(!agent.getQuote(12).isAuctionClosed()) {
@@ -350,6 +346,7 @@ public class AgentElman extends AgentImpl {
 			}
 
 		}
+		*/
 
 		if(checkAllHotelAuctionsClosed()) {
 			for(Client c: clients) {
@@ -437,13 +434,15 @@ public class AgentElman extends AgentImpl {
 
 	private void bidOnFlights(int auction, Quote quote) {
 
-		noOfFlightPerturbations++;
+		noOfFlightPerturbations++; //REMEMBER this gets called 8 times, hence the 80 below.
 
 		if(lastFlightPrice[auction] == 0) {
 			lastFlightPrice[auction] = quote.getAskPrice();
+			initialFlightPrice[auction] = quote.getAskPrice();
 		}
 
 		if(quote.getAskPrice() - lastFlightPrice[auction] >= 10 && agent.getAllocation(auction) > agent.getOwn(auction)) {
+			System.out.println("Is rising, panic?" + (quote.getAskPrice() - lastFlightPrice[auction]));
 			Bid bid = new Bid(auction);
 			bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
 			if (DEBUG) {
@@ -452,7 +451,8 @@ public class AgentElman extends AgentImpl {
 						+ agent.getOwn(auction));
 			}
 			agent.submitBid(bid);
-		} else if(noOfFlightPerturbations >= 20 && agent.getAllocation(auction) > agent.getOwn(auction)) {
+		} else if(noOfFlightPerturbations >= 80 && agent.getAllocation(auction) > agent.getOwn(auction)) {
+			
 			if(quote.getAskPrice() - initialFlightPrice[auction] > 0) {
 				Bid bid = new Bid(auction);
 				bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
@@ -463,13 +463,7 @@ public class AgentElman extends AgentImpl {
 				}
 				agent.submitBid(bid);
 			}
-		}
-		
-		lastFlightPrice[auction] = quote.getAskPrice();
-
-
-
-		if(agent.getGameTime() > 6.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
+		} else if(quote.getAskPrice() == 150 && agent.getAllocation(auction) > agent.getOwn(auction)) {
 			Bid bid = new Bid(auction);
 			bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
 			if (DEBUG) {
@@ -478,6 +472,42 @@ public class AgentElman extends AgentImpl {
 						+ agent.getOwn(auction));
 			}
 			agent.submitBid(bid);
+		}
+		
+		lastFlightPrice[auction] = quote.getAskPrice();
+
+
+
+		if(agent.getGameTime() > 6.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
+			
+			if(auction < 4) {
+				if(agent.getOwn(auction + 8) > 0 || agent.getOwn(auction + 12) > 0 || 
+						!closedCheap[auction] || !closedGood[auction]) {
+					Bid bid = new Bid(auction);
+					bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
+					if (DEBUG) {
+						log.finest("submitting bid with alloc="
+								+ agent.getAllocation(auction) + " own="
+								+ agent.getOwn(auction));
+					}
+					agent.submitBid(bid);
+				}
+			} else {
+				if(agent.getOwn(auction + 4) > 0 || agent.getOwn(auction + 8) > 0 ||
+						!closedCheap[auction-4] || !closedGood[auction-4]) {
+					Bid bid = new Bid(auction);
+					bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
+					if (DEBUG) {
+						log.finest("submitting bid with alloc="
+								+ agent.getAllocation(auction) + " own="
+								+ agent.getOwn(auction));
+					}
+					agent.submitBid(bid);
+				}
+				
+			}
+			
+			
 		}
 
 	}
