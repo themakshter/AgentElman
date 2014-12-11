@@ -327,18 +327,15 @@ public class AgentElman extends AgentImpl {
 		for (int i = 0; i < 28; i++) {
 			fear[i] = 5.0f;
 			if (agent.getAllocation(i) > 2) {
-				fear[i] += 10f;
+				fear[i] += 20f;
 			}
 			if (agent.getAllocation(i) > 3) {
-				fear[i] +=10f;
+				fear[i] +=15f;
 			}
 			if (agent.getAllocation(i) > 4) {
-				fear[i]+= 15f;
+				fear[i]+= 10f;
 			}
 			if(agent.getAllocation(i) > 5){
-				fear[i] += 15f;
-			}
-			if(agent.getAllocation(i) > 6){
 				fear[i] += 10f;
 			}
 		}
@@ -359,6 +356,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	public void gameStopped() {
+		updateTimer.stop();
 		log.fine("Game Stopped!");
 	}
 
@@ -479,11 +477,11 @@ public class AgentElman extends AgentImpl {
 					int wantedInFlight = clientPackage.calculateLastPossibleInFlightForCurrentHotels();		
 
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
-						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.ARRIVAL, wantedOutFlight));
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.TYPE_OUTFLIGHT, wantedOutFlight));
 						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					} else if (wantedInFlight != 0) {
-						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.DEPARTURE, wantedInFlight));
+						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.TYPE_INFLIGHT, wantedInFlight));
 						bid.addBidPoint(1, 700);
 						agent.submitBid(bid);
 					}
