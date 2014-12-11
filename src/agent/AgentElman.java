@@ -469,7 +469,7 @@ public class AgentElman extends AgentImpl {
 
 
 
-		if(agent.getGameTime() > 5.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
+		if(agent.getGameTime() > 6.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
 			Bid bid = new Bid(auction);
 			bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
 			if (DEBUG) {
