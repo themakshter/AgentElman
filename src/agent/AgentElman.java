@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
@@ -33,21 +36,25 @@ public class AgentElman extends AgentImpl {
 	private EntertainmentTracker haveEntertainment,wantEntertainment, unallocatedEntertainment;
 	private HotelTracker haveHotels,wantHotels, unallocatedHotels;
 	private FlightTracker haveFlights,wantFlights, unallocatedFlights;
-	
+
 	private boolean[] closedGood,closedCheap;
+	
+	private int noOfAuctionsClosed;
 
 	ArrayList<Client> clients;
 	ClientComparator cc = new ClientComparator();
-	
+
 	Timer updateTimer;
-	
-	
+
+
 	private int[][] entertainVal;
-	
+
 	private int[] lastAlloc;
-	
+
 	private float [] fear;
 	private float openingPrice;
+	
+	private List<Float>[] historicFlightData;
 
 	protected void init(ArgEnumerator args) {
 		prices = new float[agent.getAuctionNo()];
@@ -67,20 +74,28 @@ public class AgentElman extends AgentImpl {
 		wantHotels = new HotelTracker();
 		haveFlights = new FlightTracker();
 		wantFlights = new FlightTracker();
-		
+
 
 		unallocatedEntertainment = new EntertainmentTracker();
 		unallocatedHotels = new HotelTracker();
-		
+
 		entertainVal = new int[13][8];
-		
+
 		lastAlloc = new int[28];
 		fear = new float[28];
 
 		closedCheap = new boolean[4];
 		closedGood = new boolean[4];
-		
+
 		openingPrice = 90.0f;
+		
+		historicFlightData = new List[8];
+		
+		for (int i = 0;i<historicFlightData.length;i++) {
+			historicFlightData[i] = new Stack<Float>();
+		}
+		
+		noOfAuctionsClosed = 0;
 	}
 
 	public void quoteUpdated(Quote quote) {
@@ -139,7 +154,7 @@ public class AgentElman extends AgentImpl {
 					}
 				} else {
 					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
-				//}
+					//}
 					float tempMax = 0;
 					int tempMaxIndex = 0;
 					for(int a = 0; a<8; a++){
@@ -155,17 +170,17 @@ public class AgentElman extends AgentImpl {
 					}else{
 						prices[auction] = Math.max(0, tempMax - 5);
 					}
-						if(lastAlloc[auction] > alloc){
-							//TODO: fix this because we need to turn this zero only once we get ticket
-							entertainVal[auction - 16][tempMaxIndex] = 0;
-						}
+					if(lastAlloc[auction] > alloc){
+						//TODO: fix this because we need to turn this zero only once we get ticket
+						entertainVal[auction - 16][tempMaxIndex] = 0;
+					}
 					lastAlloc[auction] = alloc;
-//					
-//					//float tempPrice = (float) Math.cbrt((double) agent
-//					//		.getGameTime() * 100f);
-//					// if(tempPrice < ){
-//					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
-//					// }
+					//					
+					//					//float tempPrice = (float) Math.cbrt((double) agent
+					//					//		.getGameTime() * 100f);
+					//					// if(tempPrice < ){
+					//					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 540000;
+					//					// }
 				}
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
@@ -176,18 +191,17 @@ public class AgentElman extends AgentImpl {
 				if(agent.getGameTime()<50 && agent.getGameTime() > 100){
 					//something like this
 				}
-				
+
 				agent.submitBid(bid);
 			}
 		} else if (auctionCategory == TACAgent.CAT_FLIGHT) {
-			//System.out.println("Flights updated " + quote.getBidPrice());
-			
-			//System.out.println(agent.getOwn(quote.getAuction()));
+
+			bidOnFlights(auction);
 			
 		}
 	}
 
-	
+
 	public void quoteUpdated(int auctionCategory) {
 		log.fine("All quotes for "
 				+ agent.auctionCategoryToString(auctionCategory)
@@ -199,11 +213,11 @@ public class AgentElman extends AgentImpl {
 				+ bid.getAuction() + " state="
 				+ bid.getProcessingStateAsString());
 		log.fine("       Hash: " + bid.getBidHash());
-		
+
 		if(bid.getAuction()>7 && bid.getAuction() < 16) {
 			System.out.println("Bid Price " + bid.getAuction());
 		}
-		
+
 	}
 
 	public void bidRejected(Bid bid) {
@@ -234,7 +248,7 @@ public class AgentElman extends AgentImpl {
 			// flight
 			wantFlights.add(1,c.getInFlight());
 			wantFlights.add(2,c.getOutFlight());
-			
+
 			c.addFlightToPackage(c.getInFlight(), 0);
 			c.addFlightToPackage(c.getOutFlight(), 1);
 
@@ -245,13 +259,13 @@ public class AgentElman extends AgentImpl {
 			//wantEntertainment.addDuration(c.getMaximumEntertainment(), c.getInFlight(), c.getOutFlight());
 			for (int j = 1; j < 5; j++) {
 				wantEntertainment.addAmount(agent.TYPE_ALLIGATOR_WRESTLING, j,1);
-				
+
 				if(c.getInFlight() <= j && c.getOutFlight() > j){
 					entertainVal[j][i] = agent.getClientPreference(i, TACAgent.E1);
 					entertainVal[j+4][i] = agent.getClientPreference(i, TACAgent.E2);
 					entertainVal[j+8][i] = agent.getClientPreference(i, TACAgent.E3);
 				}
-				
+
 			}
 		}
 
@@ -265,19 +279,19 @@ public class AgentElman extends AgentImpl {
 			haveEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
-		
+
 		for (int i = 1; i < 5; i++) {
 			unallocatedEntertainment.addAmount(1,i,
 					agent.getOwn(agent.getAuctionFor(agent.CAT_ENTERTAINMENT,
 							agent.TYPE_ALLIGATOR_WRESTLING, i)));
-			
+
 			unallocatedEntertainment.addAmount(2,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_AMUSEMENT, i)));
-			
+
 			unallocatedEntertainment.addAmount(3,i,agent.getOwn(agent.getAuctionFor(
 					agent.CAT_ENTERTAINMENT, agent.TYPE_MUSEUM, i)));
 		}
-		
+
 		allocateStartingEnt();
 
 		/*for(Client c: clients) {
@@ -299,17 +313,17 @@ public class AgentElman extends AgentImpl {
 		};
 		updateTimer = new Timer(1 * 59 * 1000, taskPerformer);
 		updateTimer.start();
-		
+
 		calculateUtilities();	
 		calculateRisk();	
 		calculateUtilOverRisk();
-		
-		
+
+
 		for (int i = 0, n = agent.getAuctionNo(); i < n; i++) {
 			lastAlloc[i] = agent.getAllocation(i) - agent.getOwn(i);
 		}
-		
-		
+
+
 		for (int i = 0; i < 28; i++) {
 			fear[i] = 5.0f;
 			if (agent.getAllocation(i) > 2) {
@@ -328,7 +342,7 @@ public class AgentElman extends AgentImpl {
 				fear[i] += 10f;
 			}
 		}
-		
+
 	}
 
 	public void updateTrackers(){
@@ -350,26 +364,27 @@ public class AgentElman extends AgentImpl {
 
 	public void auctionClosed(int auction) {
 		log.fine("*** Auction " + auction + " closed!");
+
 		
 		updateClosedHotelAuctions(auction);
-		
+
 		int type = agent.getAuctionType(auction);
 		int numOwned = agent.getOwn(auction);
 		int day = agent.getAuctionDay(auction);
-		
+
 		haveHotels.addAmount(type, day, numOwned);
 		unallocatedHotels.addAmount(type, day, numOwned);
-		
+
 		ArrayList<Client> sortedHotelUtil =  cc.sort(clients, 5);
 		if (type == 1) {
-			
+
 			int noToAllocate = numOwned;
-			
+
 			for( Client c : sortedHotelUtil) {	
 				if( noToAllocate <=0 ) {
 					break;
 				}
-				
+
 				if(c.validDay(day)) {
 					c.addHotelToPackage(day, type);
 					unallocatedHotels.subtract(type, day, 1);
@@ -378,24 +393,24 @@ public class AgentElman extends AgentImpl {
 			}
 		} else if (type == 0) {
 			int noToAllocate = numOwned;
-			
+
 			for(int i = sortedHotelUtil.size()-1; i>=0;i--) {
 				if( noToAllocate <=0 ) {
 					break;
 				}
-				
+
 				Client c = sortedHotelUtil.get(i);
-				
+
 				if(c.validDay(day)) {
 					c.addHotelToPackage(day, type);
 					unallocatedHotels.subtract(type, day, 1);
 					noToAllocate--;
 				}	
 			}
-			
+
 		}
-		
-		
+
+
 		for(Client c : clients) {
 			ClientPackage clientPackage = c.getClientPackage();		
 			if (clientPackage.calculateStayDuration() == 1 && clientPackage.validDay(day)) {
@@ -447,22 +462,22 @@ public class AgentElman extends AgentImpl {
 			}
 
 		}
-		
-		
-	/*	for(Client c : clients) {
+
+
+		/*	for(Client c : clients) {
 			System.out.println(c.getClientPackage().toString());
 			System.out.println(c.getClientPackage().canCompletePackage(closedGood, closedCheap));
 			System.out.println();
-			
+
 		}*/
-		
+
 		if(checkAllHotelAuctionsClosed()) {
 			for(Client c: clients) {
 				ClientPackage clientPackage = c.getClientPackage();
 				if(!clientPackage.isFeasible()) {
 					int wantedOutFlight = clientPackage.calculateLastPossibleOutFlightForCurrentHotels();
 					int wantedInFlight = clientPackage.calculateLastPossibleInFlightForCurrentHotels();		
-					
+
 					if (wantedOutFlight - clientPackage.getInFlight() > clientPackage.getOutFlight() - wantedInFlight && wantedOutFlight != 0) {
 						Bid bid = new Bid(agent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.ARRIVAL, wantedOutFlight));
 						bid.addBidPoint(1, 700);
@@ -474,11 +489,11 @@ public class AgentElman extends AgentImpl {
 					}
 				}	
 			}
-			
+
 		}
-		
+
 		float tempValue = 0;
-	//	System.out.println("Time : " + agent.getGameTime());
+		//	System.out.println("Time : " + agent.getGameTime());
 		if (agent.getGameTime() > 59 * 1000 && agent.getGameTime() < 69 * 1000) {
 			System.out.println("Time in loop : " + agent.getGameTime());
 			int count = 0;
@@ -487,14 +502,14 @@ public class AgentElman extends AgentImpl {
 					count++;
 				}
 				tempValue += agent.getQuote(i).getAskPrice();
-				
+
 			}
 			tempValue /= count;
 			openingPrice = (openingPrice + tempValue)/2;
 			System.out.println("Opening price:" + openingPrice);
 		}
 	}
-	
+
 	private void updateClosedHotelAuctions(int auction) {
 		switch(auction) {
 		case 8:
@@ -523,9 +538,9 @@ public class AgentElman extends AgentImpl {
 			break;	
 		}
 	}
-	
+
 	private boolean checkAllHotelAuctionsClosed() {
-		
+
 		for (boolean b : closedCheap) {
 			if (!b) {
 				return false;
@@ -536,8 +551,23 @@ public class AgentElman extends AgentImpl {
 				return false;
 			}
 		}
-		
+
 		return true;
+	}
+
+	private void bidOnFlights(int auction) {
+				
+			if(agent.getGameTime() > 4.5f*60f*1000f && agent.getAllocation(auction) > agent.getOwn(auction)) {
+				Bid bid = new Bid(auction);
+				bid.addBidPoint(agent.getAllocation(auction) - agent.getOwn(auction), 1000);
+				if (DEBUG) {
+					log.finest("submitting bid with alloc="
+							+ agent.getAllocation(auction) + " own="
+							+ agent.getOwn(auction));
+				}
+				agent.submitBid(bid);
+			}
+		
 	}
 
 	private void sendBids() {
@@ -547,7 +577,7 @@ public class AgentElman extends AgentImpl {
 			switch (agent.getAuctionCategory(i)) {
 			case TACAgent.CAT_FLIGHT:
 				if (alloc > 0) {
-					price = 1000;
+					price = 0;
 				}
 				break;
 			case TACAgent.CAT_HOTEL:
@@ -598,7 +628,7 @@ public class AgentElman extends AgentImpl {
 			}
 		}
 	}
-	
+
 	private void updateBids() { //may want to pass fear here if changed
 		//float fear = 15.0f;
 		float safety = 10.0f;
@@ -896,7 +926,7 @@ public class AgentElman extends AgentImpl {
 			}
 
 		}
-		
+
 	}
 
 	private int bestEntDay(int inFlight, int outFlight, int type) {
@@ -927,7 +957,7 @@ public class AgentElman extends AgentImpl {
 	}
 
 	private void allocateStartingEnt() {
-		
+
 		ArrayList<Client> sortedClients = cc.sort(clients,2);
 
 		for(Client c : sortedClients) {
@@ -939,9 +969,9 @@ public class AgentElman extends AgentImpl {
 				}
 			}
 		}
-		
+
 		sortedClients = cc.sort(clients,3);
-		
+
 		for(Client c : sortedClients) {
 			for(int i = 1;i <= unallocatedEntertainment.getAmusement().length; i++) {
 				if(c.validDay(i) && unallocatedEntertainment.getAmusement()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
@@ -951,9 +981,9 @@ public class AgentElman extends AgentImpl {
 				}
 			}
 		}
-		
+
 		sortedClients = cc.sort(clients,4);
-		
+
 		for(Client c : sortedClients) {
 			for(int i = 1;i <= unallocatedEntertainment.getMuseum().length; i++) {
 				if(c.validDay(i) && unallocatedEntertainment.getMuseum()[i-1] > 0 && c.getClientPackage().getEntertainmentsAt(i) == 0) {
