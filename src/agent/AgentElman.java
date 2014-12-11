@@ -19,7 +19,7 @@ public class AgentElman extends AgentImpl {
 	private float[] prices, diff, lastAskPrice, lastAskPrice2, lastBidPrice,
 	lastBidPrice2;
 
-	private EntertainmentTracker haveEntertainment,wantEntertainment, unallocatedEntertainment;
+	private EntertainmentTracker unallocatedEntertainment;
 	private HotelTracker unallocatedHotels;
 
 	private boolean[] closedGood,closedCheap;
@@ -44,8 +44,6 @@ public class AgentElman extends AgentImpl {
 		lastBidPrice = new float[28];
 		lastBidPrice2 = new float[28];
 		clients = new ArrayList<Client>();
-		haveEntertainment = new EntertainmentTracker();
-		wantEntertainment = new EntertainmentTracker();
 
 		unallocatedEntertainment = new EntertainmentTracker();
 		unallocatedHotels = new HotelTracker();
@@ -70,20 +68,15 @@ public class AgentElman extends AgentImpl {
 		int auctionCategory = TACAgent.getAuctionCategory(auction);
 		if (auctionCategory == TACAgent.CAT_HOTEL) {
 			int alloc = agent.getAllocation(auction);
-			//float fear[auction] = 5.0f;
-			//if(alloc > 2){fear = fear + 10} //something like this - maybe 3,20?
 			if (alloc > 0 && quote.hasHQW(agent.getBid(auction))
 					&& quote.getHQW() < alloc) {
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
 				updateBids();
-				System.out.println("Price : " + prices[auction]);
-				System.out.println("Ask price: " + quote.getAskPrice());
 				prices[auction] = quote.getAskPrice() + diff[auction];
 				if(prices[auction] > 650){
 					prices[auction] = 650;
 				}
-				System.out.println("New Price : " + prices[auction]);
 				bid.addBidPoint(alloc, prices[auction]);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
@@ -96,7 +89,7 @@ public class AgentElman extends AgentImpl {
 				Bid bid = new Bid(auction);
 				// Can not own anything in hotel auctions...
 				updateBids();
-				prices[auction] = quote.getAskPrice() + diff[auction];
+				prices[auction] = quote.getAskPrice() + diff[auction] + fear[auction];
 				if(prices[auction] > 650){
 					prices[auction] = 650;
 				}
@@ -121,12 +114,9 @@ public class AgentElman extends AgentImpl {
 						prices[auction] = (new Float("" + power)).floatValue();
 					}
 				} else {
-					//prices[auction] = 50f + (agent.getGameTime() * 100f) / 720000;
-					//}
 					float tempMax = 0;
 					int tempMaxIndex = 0;
 					for(int a = 0; a<8; a++){
-						//auction -16
 						if(entertainVal[auction-16][a] > tempMax){
 							tempMax = entertainVal[auction-16][a];
 							tempMaxIndex = a;
@@ -246,18 +236,6 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
-	public void updateTrackers(){
-		int amountLeft;
-		for(int i = 0;i < 4;i++){
-			for(int j = 1; j < 4;j++){
-				amountLeft = wantEntertainment.subtract(j, i, haveEntertainment.getTicket(j, i));
-			}
-		}
-
-		//TODO: sort out haveStuff and wantStuff
-
-
-	}
 
 	public void gameStopped() {
 		System.out.println("Opening Price: " + openingPrice);
@@ -477,11 +455,11 @@ public class AgentElman extends AgentImpl {
 				if (alloc > 0) {
 					price = 251;
 					prices[i] = 251f;
-				}//if alloc = 1 or if = 0? //if do additional in non 0 bids remember re-bid rules
+				}
 				else if(alloc == 0){
 					price = 20;
 					prices[i] = 20; 
-					Bid bid = new Bid(i); //make bid here?
+					Bid bid = new Bid(i);
 					bid.addBidPoint(1, price);
 					if (DEBUG) {
 						log.finest("submitting bid with alloc="
@@ -500,7 +478,7 @@ public class AgentElman extends AgentImpl {
 					prices[i] = 130f;
 				} else if (alloc > 0) {
 					price = 0;
-					prices[i] = 0f;//needs change
+					prices[i] = 0f;
 				}
 				break;
 			default:
@@ -508,7 +486,7 @@ public class AgentElman extends AgentImpl {
 			}
 			if (price > 0) {
 				Bid bid = new Bid(i);
-				bid.addBidPoint(alloc, price);//alloc + 1 ?
+				bid.addBidPoint(alloc, price);
 				if (DEBUG) {
 					log.finest("submitting bid with alloc="
 							+ agent.getAllocation(i) + " own="
@@ -521,11 +499,10 @@ public class AgentElman extends AgentImpl {
 		}
 	}
 
-	private void updateBids() { //may want to pass fear here if changed
-		//float fear = 15.0f;
+	private void updateBids() {
 		float safety = 10.0f;
 		for (int i = 8, n = 16; i < n; i++) {
-			safety = fear[i];
+			//safety = fear[i];
 			Quote quote = agent.getQuote(i);
 			if (quote.getAskPrice() > lastAskPrice[i] && lastAskPrice[i] != 0) {
 				diff[i] = (quote.getAskPrice() - lastAskPrice[i]) + safety;
@@ -540,20 +517,6 @@ public class AgentElman extends AgentImpl {
 			lastAskPrice[i] = quote.getAskPrice();
 		}
 	}
-
-	//TODO: complete method
-	private void updateAllocation(){
-		for(int i = 8;i < 16;i++){
-			int own = agent.getOwn(i);
-			int allocated = agent.getAllocation(i);
-			Quote q = agent.getQuote(i);
-			//if auction closes and we don't have enough, we target the other auction
-			if(own < allocated && q.isAuctionClosed()){
-
-			}
-		}
-	}
-
 
 
 	private void calculateAllocation() {
@@ -604,14 +567,14 @@ public class AgentElman extends AgentImpl {
 
 	private int bestEntDay(int inFlight, int outFlight, int type) {
 		for (int i = inFlight; i < outFlight; i++) {
-			int auction = agent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, type,
+			int auction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, type,
 					i);
 			if (agent.getAllocation(auction) < agent.getOwn(auction)) {
 				return auction;
 			}
 		}
 		// If no left, just take the first...
-		return agent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, type, inFlight);
+		return TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, type, inFlight);
 	}
 
 	private int nextEntType(int client, int lastType) {
@@ -630,17 +593,6 @@ public class AgentElman extends AgentImpl {
 	}
 
 	private void allocateStartingEnt() {
-
-		// Set things we own for entertainment
-		for (int i = 1; i < 5; i++) {
-			haveEntertainment.addAmount(1,i,
-					agent.getOwn(TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT,
-							TACAgent.TYPE_ALLIGATOR_WRESTLING, i)));
-			haveEntertainment.addAmount(2,i,agent.getOwn(TACAgent.getAuctionFor(
-					TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_AMUSEMENT, i)));
-			haveEntertainment.addAmount(3,i,agent.getOwn(TACAgent.getAuctionFor(
-					TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_MUSEUM, i)));
-		}
 
 		for (int i = 1; i < 5; i++) {
 			unallocatedEntertainment.addAmount(1,i,
