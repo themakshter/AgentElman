@@ -5,6 +5,7 @@ game/
 .project
 *.class
 *.log
+*.tmp
 tacserver/
 games/
 aw*.log*
