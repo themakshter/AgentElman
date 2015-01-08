@@ -8,9 +8,10 @@ exclude_games = []
 
 agent_results = {}
 
+agent_nams = {"AgentElman"}
 # Download the results from the ECS TAC server
 
-for game in range(613,656):
+for game in range(613,657):
     
     if game not in exclude_games:
     
@@ -20,17 +21,21 @@ for game in range(613,656):
     
         if s.count('HTTP ERROR')==0:
             
-            print "Reading game " + str(game)
+            #print "Reading game " + str(game)
                         
             r = re.findall(r'(<tr><td>'+text_match+'</td><td>'+number_match+'</td><td>'+number_match+'</td><td>'+number_match+'</td>)', s)
         
             for tuple in r:
-            
+                agentName = 'AgentElman'
+                
                 agent_name = tuple[1]
                 agent_utility = tuple[2]
                 agent_cost = tuple[3]
                 agent_score = tuple[4]
-         
+                
+                if agent_name == agentName: 
+                    print agent_score
+                
                 if agent_name not in agent_results:
             
                     agent_results[agent_name] = []
