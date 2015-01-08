@@ -7,14 +7,15 @@ number_match = '(?:<font color=red>)?([-+]?[0-9]*\.?[0-9]*)(?:</font>)?'
 exclude_games = []
 
 agent_results = {}
+scores = []
+positions = []
+differences = []
 
 agent_nams = {"AgentElman"}
 # Download the results from the ECS TAC server
 
-scores = {}
-positions = {}
-differences = {}
 
+gameNum = 0
 for game in range(613,657):
     
     if game not in exclude_games:
@@ -43,8 +44,13 @@ for game in range(613,657):
                     topScorer = float(agent_score)
                 
                 if agent_name == agentName: 
+                    gameNum+=1
                     difference = topScorer - float(agent_score)
-                    print agent_score + " " + str(i) + " " + str(difference)
+                    positions.append(i)
+                    differences.append(differences)
+                    scores.append(float(agent_score))
+                    print agentName +" " + str(gameNum) + " " + str(game) + " " + agent_score + " " + str(i) + " " + str(difference)
+                    
                     
                     
                     
@@ -80,13 +86,16 @@ for agent,scores in agent_results.items():
 agent_means = sorted(agent_means, key=lambda value: value[1], reverse=True)
     
 print
-print "MEAN SCORES"
+print scores
+print positions
+print differences
+
 print
 
 count = 1
 
 for agent,scores,number in agent_means:
     
-    print str(count) + " \t " + agent + " \t " + str(scores) + " \t " + str(number)
+    #print str(count) + " \t " + agent + " \t " + str(scores) + " \t " + str(number)
     
     count = count + 1
